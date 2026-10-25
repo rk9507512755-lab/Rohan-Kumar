@@ -1,0 +1,73 @@
+year,house,constituency_no,constituency_name,candidate_sr,candidate,party,votes,source_file,file_total_valid,file_nota
+2013,VS,340,Bhatpar Rani,1,Aniruddh,Nationalist Congress Party,2065,2013_VS_Bye_340-Bhatpar_Rani.pdf,162283,
+2013,VS,340,Bhatpar Rani,2,Ashutosh Upadhyay,Samajwadi Party,73100,2013_VS_Bye_340-Bhatpar_Rani.pdf,162283,
+2013,VS,340,Bhatpar Rani,3,Binda,Bahujan Samaj Party,24711,2013_VS_Bye_340-Bhatpar_Rani.pdf,162283,
+2013,VS,340,Bhatpar Rani,4,Raghvendra Vir Vikram,Indian National Congress,10361,2013_VS_Bye_340-Bhatpar_Rani.pdf,162283,
+2013,VS,340,Bhatpar Rani,5,Raj Kumar Shahi,Bharatiya Janata Party,5851,2013_VS_Bye_340-Bhatpar_Rani.pdf,162283,
+2013,VS,340,Bhatpar Rani,6,Indresh,Akhil Bhart Hindu Mahasabha,841,2013_VS_Bye_340-Bhatpar_Rani.pdf,162283,
+2013,VS,340,Bhatpar Rani,7,Tej Bahadur,Ambedkar Samaj Party,612,2013_VS_Bye_340-Bhatpar_Rani.pdf,162283,
+2013,VS,340,Bhatpar Rani,8,Shashikant,Bundelkhand Congress,554,2013_VS_Bye_340-Bhatpar_Rani.pdf,162283,
+2013,VS,340,Bhatpar Rani,9,Sriram,Communist Party of India (Marxist-Leninist) (Liberation),1221,2013_VS_Bye_340-Bhatpar_Rani.pdf,162283,
+2013,VS,340,Bhatpar Rani,10,Sabhakunwar,Suheldev Bharatiya Samaj Party,38998,2013_VS_Bye_340-Bhatpar_Rani.pdf,162283,
+2013,VS,340,Bhatpar Rani,11,Hasaratullah,Janvadi Party (Socialist),1362,2013_VS_Bye_340-Bhatpar_Rani.pdf,162283,
+2013,VS,340,Bhatpar Rani,12,Jaiprakash,Independent,2607,2013_VS_Bye_340-Bhatpar_Rani.pdf,162283,
+2016,VS,5,Deoband,1,Mavia Ali,Indian National Congress,51012,2016_VS_Bye_05-Deoband.pdf,169216,826
+2016,VS,5,Deoband,2,Meena Singh,Samajwadi Party,47453,2016_VS_Bye_05-Deoband.pdf,169216,826
+2016,VS,5,Deoband,3,Rampal Singh Pundir,Bharatiya Janata Party,45513,2016_VS_Bye_05-Deoband.pdf,169216,826
+2016,VS,5,Deoband,4,Sharafat Ali,Bahujan Mukti Party,659,2016_VS_Bye_05-Deoband.pdf,169216,826
+2016,VS,5,Deoband,5,Sahaspal urf Sahab Singh,Inqlab Vikas Dal,283,2016_VS_Bye_05-Deoband.pdf,169216,826
+2016,VS,5,Deoband,6,Amit Kumar,Independent,1378,2016_VS_Bye_05-Deoband.pdf,169216,826
+2016,VS,5,Deoband,7,Kiran R.C. Jatav,Independent,482,2016_VS_Bye_05-Deoband.pdf,169216,826
+2016,VS,5,Deoband,8,Zaheer Fatma,Independent,455,2016_VS_Bye_05-Deoband.pdf,169216,826
+2016,VS,5,Deoband,9,Vinod Kumar Tejyan,Independent,16802,2016_VS_Bye_05-Deoband.pdf,169216,826
+2016,VS,5,Deoband,10,Veer Pratap,Independent,475,2016_VS_Bye_05-Deoband.pdf,169216,826
+2016,VS,5,Deoband,11,Mo. Shahid Sahel,Independent,3410,2016_VS_Bye_05-Deoband.pdf,169216,826
+2016,VS,5,Deoband,12,Sudhir,Independent,468,2016_VS_Bye_05-Deoband.pdf,169216,826
+2016,VS,14,Muzaffarnagar,1,Kapil Dev Agrawal,Bharatiya Janata Party,65378,2016_VS_Bye_14-Muzaffarnagar.pdf,155467,387
+2016,VS,14,Muzaffarnagar,2,Gaurav Swarup Bansal,Samajwadi Party,58026,2016_VS_Bye_14-Muzaffarnagar.pdf,155467,387
+2016,VS,14,Muzaffarnagar,3,Mithlesh Pal,Rashtriya Lok Dal,14673,2016_VS_Bye_14-Muzaffarnagar.pdf,155467,387
+2016,VS,14,Muzaffarnagar,4,Salman Sayeed,Indian National Congress,10561,2016_VS_Bye_14-Muzaffarnagar.pdf,155467,387
+2016,VS,14,Muzaffarnagar,5,Amreeta,Bahujan Mukti Party,339,2016_VS_Bye_14-Muzaffarnagar.pdf,155467,387
+2016,VS,14,Muzaffarnagar,6,Mauo Najar,Peace Party,1722,2016_VS_Bye_14-Muzaffarnagar.pdf,155467,387
+2016,VS,14,Muzaffarnagar,7,Pankaj Bhardwaj,Shiv Sena,482,2016_VS_Bye_14-Muzaffarnagar.pdf,155467,387
+2016,VS,14,Muzaffarnagar,8,Rakam Singh,Majdoor Kisan Union Party,105,2016_VS_Bye_14-Muzaffarnagar.pdf,155467,387
+2016,VS,14,Muzaffarnagar,9,Satvir,Jansatta Party,146,2016_VS_Bye_14-Muzaffarnagar.pdf,155467,387
+2016,VS,14,Muzaffarnagar,10,Amit Jani,Independent,1051,2016_VS_Bye_14-Muzaffarnagar.pdf,155467,387
+2016,VS,14,Muzaffarnagar,11,Mohd. Umar,Independent,111,2016_VS_Bye_14-Muzaffarnagar.pdf,155467,387
+2016,VS,14,Muzaffarnagar,12,Rishiram,Independent,103,2016_VS_Bye_14-Muzaffarnagar.pdf,155467,387
+2016,VS,14,Muzaffarnagar,13,Dinesh Kumar,Independent,162,2016_VS_Bye_14-Muzaffarnagar.pdf,155467,387
+2016,VS,14,Muzaffarnagar,14,Dharmveer Samunder,Independent,216,2016_VS_Bye_14-Muzaffarnagar.pdf,155467,387
+2016,VS,14,Muzaffarnagar,15,Fatma,Independent,273,2016_VS_Bye_14-Muzaffarnagar.pdf,155467,387
+2016,VS,14,Muzaffarnagar,16,Phool Singh,Independent,764,2016_VS_Bye_14-Muzaffarnagar.pdf,155467,387
+2016,VS,14,Muzaffarnagar,17,Madhav Ram,Independent,576,2016_VS_Bye_14-Muzaffarnagar.pdf,155467,387
+2016,VS,14,Muzaffarnagar,18,Raj Kishor,Independent,392,2016_VS_Bye_14-Muzaffarnagar.pdf,155467,387
+2016,VS,274,Bikapur,1,Asad Ahmad,Indian National Congress,2945,2016_VS_Bye_274-Bikapur.pdf,167999,1857
+2016,VS,274,Bikapur,2,Anand Sen,Samajwadi Party,68896,2016_VS_Bye_274-Bikapur.pdf,167999,1857
+2016,VS,274,Bikapur,3,Ka. Munna Singh Chauhan,Rashtriya Lok Dal,62456,2016_VS_Bye_274-Bikapur.pdf,167999,1857
+2016,VS,274,Bikapur,4,Ramkrishna Tiwari,Bharatiya Janata Party,11933,2016_VS_Bye_274-Bikapur.pdf,167999,1857
+2016,VS,274,Bikapur,5,Azmuddin,Peace Party,2800,2016_VS_Bye_274-Bikapur.pdf,167999,1857
+2016,VS,274,Bikapur,6,Pradeep Kumar Kori,All India Majlis-e-Ittehadul Muslimeen,11857,2016_VS_Bye_274-Bikapur.pdf,167999,1857
+2016,VS,274,Bikapur,7,Rajesh,Bahujan Mukti Party,2022,2016_VS_Bye_274-Bikapur.pdf,167999,1857
+2016,VS,274,Bikapur,8,Dr. Shiv Shankar Indian,Most Backward Classes of India,459,2016_VS_Bye_274-Bikapur.pdf,167999,1857
+2016,VS,274,Bikapur,9,Shiv Shankar Vishwakarma,Maulik Adhikar Party,966,2016_VS_Bye_274-Bikapur.pdf,167999,1857
+2016,VS,274,Bikapur,10,Suresh Chandra Pandey,Adarshwadi Congress Party,1471,2016_VS_Bye_274-Bikapur.pdf,167999,1857
+2016,VS,274,Bikapur,11,Afsar Mehdi,Independent,1264,2016_VS_Bye_274-Bikapur.pdf,167999,1857
+2016,VS,274,Bikapur,12,Samar Jeet Pandey,Independent,930,2016_VS_Bye_274-Bikapur.pdf,167999,1857
+2016,VS,30,Bilari,1,Mohd. Faeem,Samajwadi Party,90464,2016_VS_Bye_30-Bilari.pdf,182039,1493
+2016,VS,30,Bilari,2,Shishu Pal Singh,Indian National Congress,3670,2016_VS_Bye_30-Bilari.pdf,182039,1493
+2016,VS,30,Bilari,3,Suresh Saini,Bharatiya Janata Party,83371,2016_VS_Bye_30-Bilari.pdf,182039,1493
+2016,VS,30,Bilari,4,Bhawar Singh Chauhan,Garib Raj Party,780,2016_VS_Bye_30-Bilari.pdf,182039,1493
+2016,VS,30,Bilari,5,Rajender,Jan Shakti Dal,318,2016_VS_Bye_30-Bilari.pdf,182039,1493
+2016,VS,30,Bilari,6,Nem Singh Jatav,Independent,348,2016_VS_Bye_30-Bilari.pdf,182039,1493
+2016,VS,30,Bilari,7,Ram Bharose,Independent,357,2016_VS_Bye_30-Bilari.pdf,182039,1493
+2016,VS,30,Bilari,8,Rahul Dev,Independent,633,2016_VS_Bye_30-Bilari.pdf,182039,1493
+2016,VS,30,Bilari,9,Waseem Ahmad,Independent,393,2016_VS_Bye_30-Bilari.pdf,182039,1493
+2016,VS,30,Bilari,10,Shahnaz,Independent,1046,2016_VS_Bye_30-Bilari.pdf,182039,1493
+2016,VS,30,Bilari,11,Seema Rani,Independent,659,2016_VS_Bye_30-Bilari.pdf,182039,1493
+2016,VS,376,Jangipur,1,Kismatiya,Samajwadi Party,82316,2016_VS_Bye_376-Jangipur.pdf,160842,1246
+2016,VS,376,Jangipur,2,Ramesh,Bharatiya Janata Party,60224,2016_VS_Bye_376-Jangipur.pdf,160842,1246
+2016,VS,376,Jangipur,3,Shailes,Indian National Congress,6852,2016_VS_Bye_376-Jangipur.pdf,160842,1246
+2016,VS,376,Jangipur,4,Dinesh Kumar Maurya,Suheldev Bharatiya Samaj Party,8925,2016_VS_Bye_376-Jangipur.pdf,160842,1246
+2016,VS,376,Jangipur,5,Nandlal,Independent,403,2016_VS_Bye_376-Jangipur.pdf,160842,1246
+2016,VS,376,Jangipur,6,Vijay,Independent,1445,2016_VS_Bye_376-Jangipur.pdf,160842,1246
+2016,VS,376,Jangipur,7,Satyadev,Independent,677,2016_VS_Bye_376-Jangipur.pdf,160842,1246

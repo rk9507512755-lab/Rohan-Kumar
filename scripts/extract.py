@@ -10,6 +10,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 from loader import load_book  # noqa: E402
 from parse_rounds import parse_rounds  # noqa: E402
 from parse_simple import parse_simple  # noqa: E402
+from parse_triplet import parse_triplet  # noqa: E402
 from parse_wide import clean_name, is_num, to_int  # noqa: E402
 
 RAW = "raw"
@@ -89,10 +90,37 @@ def same_votes(a, b):
     return sum(1 for x in sb if x in sa) >= 0.5 * len(sb)
 
 
+def drop_constant_columns(res):
+    """Remove 'candidate' columns that are really S.No / party-code columns:
+    the same non-zero number at (almost) every polling station."""
+    if not res or len(res["booths"]) < 10:
+        return res
+    keep = []
+    for i, c in enumerate(res["candidates"]):
+        vals = [b["votes"][i] for b in res["booths"] if not b.get("is_postal")]
+        vals = [v for v in vals if v is not None]
+        if vals:
+            top, cnt = max(((v, vals.count(v)) for v in set(vals)), key=lambda x: x[1])
+            if top != 0 and cnt >= 0.9 * len(vals):
+                continue
+        keep.append(i)
+    if len(keep) == len(res["candidates"]):
+        return res
+    res["warnings"] = res.get("warnings", []) + [
+        f"dropped {len(res['candidates']) - len(keep)} constant-valued column(s) (serial numbers)"]
+    res["candidates"] = [res["candidates"][i] for i in keep]
+    for b in res["booths"]:
+        b["votes"] = [b["votes"][i] for i in keep]
+    for t in res.get("totals", []):
+        t["votes"] = [t["votes"][i] for i in keep]
+    return res
+
+
 def combine(results):
     """Pick the best sheet result; append sibling parts (same candidates,
     new booths) or merge column-split sheets (same booths, new candidates)."""
-    results = [r for r in results if r and len(r["booths"]) >= 2]
+    results = [drop_constant_columns(r) for r in results if r and len(r["booths"]) >= 2]
+    results = [r for r in results if len(r["candidates"]) >= 2]
     if not results:
         return None
     results.sort(key=score, reverse=True)
@@ -126,6 +154,16 @@ def combine(results):
     return best
 
 
+SHEET_AC = re.compile(r"^\s*(?:a\.?\s*c\.?[\s_-]*(?:no\.?)?\s*)?0*(\d{1,3})(?!\d)", re.I)
+
+
+def sheet_ac(name):
+    if re.match(r"^\s*(r\d|round|table|sheet|page|part|भाग)", name, re.I):
+        return None
+    m = SHEET_AC.match(name)
+    return int(m.group(1)) if m and 1 <= int(m.group(1)) <= 403 else None
+
+
 def header_text(sheets):
     for sh in sheets:
         t = " ".join(x for row in sh.rows[:7] for x in row if x)
@@ -145,11 +183,21 @@ def process(path):
         rec["kruti_cells"] = sum(s.kd_cells for s in sheets)
         rec["kruti_heuristic_cells"] = sum(s.kd_heuristic for s in sheets)
         from parse_wide import parse_wide
+        numbered = {sh.name: sheet_ac(sh.name) for sh in sheets}
+        mine = [sh for sh in sheets if numbered[sh.name] == ac]
+        others_numbered = {v for v in numbered.values() if v and v != ac}
+        use_sheets = sheets
+        if mine and len(mine) < len(sheets):
+            use_sheets = mine
+            rec["notes"].append(f"used sheet '{mine[0].name}' named after this AC")
+        elif not mine and len(others_numbered) >= 2:
+            rec["notes"].append("workbook holds sheets for other ACs only (" +
+                                ", ".join(str(x) for x in sorted(others_numbered)) + ")")
         cands = []
-        for sh in sheets:
+        for sh in use_sheets:
             if sh.nrows < 4:
                 continue
-            for fn in (parse_wide, parse_simple):
+            for fn in (parse_wide, parse_simple, parse_triplet):
                 try:
                     r = fn(sh)
                 except Exception as e:  # keep going with other parsers
@@ -159,6 +207,21 @@ def process(path):
                     r["sheet"] = sh.name
                     cands.append(r)
         res = combine(cands)
+        if (res is None or score(res) < 5) and use_sheets is not sheets:
+            cands = []
+            for sh in sheets:
+                if sh.nrows < 4:
+                    continue
+                for fn in (parse_wide, parse_simple, parse_triplet):
+                    try:
+                        r = fn(sh)
+                    except Exception:
+                        r = None
+                    if r:
+                        r["sheet"] = sh.name
+                        cands.append(r)
+            res = combine(cands)
+            rec["notes"].append("sheet named after this AC had no usable table; used other sheets")
         if res is None or score(res) < 5:
             rr = parse_rounds(sheets)
             if rr and score(rr) > score(res):

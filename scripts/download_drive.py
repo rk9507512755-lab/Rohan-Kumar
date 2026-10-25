@@ -1,9 +1,11 @@
+"""Download the original Form-20 files listed in drive_filelist.json from the
+Google Drive folder (skips 00_MASTER CSV/XLSX, which are not used)."""
 import json, os, sys, subprocess
 from concurrent.futures import ThreadPoolExecutor
-L = json.load(open('/home/user/ups/filelist.json'))
+L = json.load(open(os.path.join(os.path.dirname(__file__), 'drive_filelist.json')))
 L = [p for p in L if not (p['path'].startswith('00_MASTER') and not p['path'].endswith('.json'))]
 def get(p):
-    dst = os.path.join('/home/user/ups/raw', p['path'])
+    dst = os.path.join('raw', p['path'])
     if os.path.exists(dst) and os.path.getsize(dst) > 0: return 'skip'
     os.makedirs(os.path.dirname(dst), exist_ok=True)
     url = f"https://drive.usercontent.google.com/download?id={p['id']}&export=download&confirm=t"

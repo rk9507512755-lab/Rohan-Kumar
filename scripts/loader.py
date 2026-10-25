@@ -41,7 +41,7 @@ def _decrypt(raw):
     return out.getvalue()
 
 
-_KD_SIGNS = re.compile("[a-z][;'\\[\\]|&]|[a-z]Z\\b|\\b(?:dqekj|flag|flg|izk0|fo0|ikVhZ|Hkkjrh;|ernku|LFky|;ksx|dqy|ek/;fed|izkFkfed|xzke|uxj|ifj\"kn|lHkk|fuokZpu|fo\\|ky;|vH;FkhZ|bafM;u)\\b|¼|½|ñ|[a-z][A-Z][a-z]")
+_KD_SIGNS = re.compile("[a-z][;'\\[\\]|&>?]|>|[a-z]Z\\b|\\b(?:dqekj|flag|flg|izk0|fo0|ikVhZ|Hkkjrh;|ernku|LFky|;ksx|dqy|ek/;fed|izkFkfed|xzke|uxj|ifj\"kn|lHkk|fuokZpu|fo\\|ky;|vH;FkhZ|bafM;u)\\b|¼|½|ñ|[a-z][A-Z][a-z]")
 
 
 def kd_score(s):
@@ -65,7 +65,7 @@ def _fix_unflagged_kruti(rows):
              if v and sum(ch.isalpha() and ch.isascii() for ch in v) >= 4 and v.upper() != v]
     if not cells:
         return 0
-    hits = [(r, c) for r, c in cells if kd_score(rows[r][c]) >= 0.3]
+    hits = [(r, c) for r, c in cells if kd_score(rows[r][c]) >= 0.2]
     if len(hits) < max(3, 0.25 * len(cells)):
         return 0
     n = 0

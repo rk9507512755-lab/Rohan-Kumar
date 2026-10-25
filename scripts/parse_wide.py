@@ -3,13 +3,13 @@ one column block (S.No | Party | Votes) per candidate."""
 import re
 from statistics import median
 
-VOTE_KW = re.compile(r"secur|votes? ?polled|प्राप्त|मत ?संख्या|प्राप्त ?मत|votes? ?obtain|votes$|^मत$|vote secu", re.I)
+VOTE_KW = re.compile(r"sec[uo]|votes? ?polled|प्राप्त|मत ?संख्या|प्राप्त ?मत|votes? ?obtain|votes$|^मत$|vote secu", re.I)
 _NB = r"(?<![\u0900-\u097F])"
 _NA = r"(?![\u0900-\u097F])"
 TOTAL_KW = re.compile(r"total|" + _NB + r"(?:योग|कुल)" + _NA + r"|कुल योग|कुल मत", re.I)
-NOTA_KW = re.compile(r"nota|none ?of ?the|उपरोक्त|नोटा|इनमें से कोई नहीं", re.I)
+NOTA_KW = re.compile(r"\bnota\b|none ?of ?the|उपरोक्त|नोटा|इनमें से कोई नहीं", re.I)
 REJ_KW = re.compile(r"reject|निरस्त|अस्वीकृत|invalid", re.I)
-TEND_KW = re.compile(r"tender|निविदत्त|टेण्डर|टेंडर", re.I)
+TEND_KW = re.compile(r"\btender|निविदत्त|टेण्डर|टेंडर", re.I)
 POSTAL_KW = re.compile(r"postal|डाक|पोस्टल|etpb", re.I)
 HDR_JUNK = re.compile(r"^(s\.? ?no\.?|sl\.? ?no\.?|si\.? ?no\.?|क्र.*|party.*|पार्टी.*|दल.*|votes.*|voters? secured|name.*)$", re.I)
 
@@ -188,7 +188,16 @@ def parse_wide(sheet):
         elif TOTAL_KW.search(h):
             post.setdefault("total", c)
     if "nota" in post:
-        cands.append(dict(name="NOTA", hdr_party="", vote_col=post.pop("nota"), party_cols=[]))
+        c0 = post.pop("nota")
+        stop = min([c for c in post.values() if c > c0] + [c0 + 4, ncols])
+        best_c, best_d = c0, -1
+        for c in range(c0, stop):
+            vals = [to_int(rows[r][c]) for r in data_rows[:300]]
+            vals = [v for v in vals if v is not None]
+            d = len(set(vals)) if len(vals) >= 0.5 * max(1, min(300, len(data_rows))) else -1
+            if d > best_d:
+                best_c, best_d = c, d
+        cands.append(dict(name="NOTA", hdr_party="", vote_col=best_c, party_cols=[]))
 
     # pre-candidate columns
     pre = {}

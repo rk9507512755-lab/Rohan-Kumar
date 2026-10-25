@@ -10,9 +10,19 @@ PRE_KW = re.compile(
     r"\bs\.? ?no\b|\bsl\.? ?no|serial|name of|^name$|^no\.?$|a\.?c\.? ?no|ps.?no|"
     r"निर्वाचक|मतदाता|पुरुष|महिला|^अन्य|मतदान|प्रतिशत|क्रम ?सं|क्र0|क्रमांक|^भाग|मतदेय|स्थल|संख्या|निविदत्त|पहचान", re.I)
 GROUP_KW = re.compile(
-    r"candidate|प्रत्याशी|अभ्यर्थी|following|निम्नलिखित|valid votes cast|votes cast in favour|"
-    r"प्राप्त मत|^votes?$|^मत$|party|दल|serial|sl\.?\s*n|^s\.?\s*no|पक्ष में|in favour", re.I)
+    r"\s*(candidates?|candidate'?s? ?id( and| &)? ?name.*|name of (the )?candidates?.*|प्रत्याशी.*|अभ्यर्थी.*|"
+    r"उम्मीदवार.*|following.*|निम्नलिखित.*|valid votes.*|votes? cast.*|.*पक्ष में.*|प्राप्त मत.*|"
+    r"votes?( secured| polled)?|मत|party( affiliation)?|दल|पार्टी|serial.*|s\.? ?no\.?|sl\.? ?no\.?|"
+    r".*in favou?r of.*)\s*", re.I)
 VALID_KW = re.compile(r"valid|वैध|वैद्य|विधिमान", re.I)
+
+
+LABEL_KW = re.compile(r"\s*(c[ao]ndidate|उम्मीदवार|प्रत्याशी|अभ्यर्थी)\W*\d*\s*|.*name of c[ao]ndidate.*|"
+                      r".*c[ao]u?nstituency.*|.*निर्वाचन क्षेत्र.*", re.I)
+
+
+def is_group(x):
+    return bool(GROUP_KW.fullmatch(x)) or bool(LABEL_KW.fullmatch(x)) or not clean_name(x)
 
 
 def _header_cells(rows, hdr, c):
@@ -67,7 +77,7 @@ def parse_simple(sheet):
         txt = " ".join(cells)
         if NOTA_KW.search(txt):
             return True
-        named = [x for x in cells if not GROUP_KW.search(x) and not is_num(x)]
+        named = [x for x in cells if not is_group(x) and not is_num(x)]
         if not named:
             return False
         low = named[-1]
@@ -95,13 +105,13 @@ def parse_simple(sheet):
 
     cands = []
     for c in cand_cols:
-        cells = [x for x in own_hdr(c) if not GROUP_KW.search(x) or NOTA_KW.search(x)]
+        cells = [x for x in own_hdr(c) if not is_group(x) or NOTA_KW.search(x)]
         cells = [x for x in cells if not is_num(x)]
         name = clean_name(cells[0]) if cells else ""
         party = cells[1] if len(cells) > 1 else ""
         # "Name - Party" or "Name (Party)" in one cell
         if not party:
-            m = re.match(r"^(.*?)\s*\((.+)\)\s*$", name)
+            m = re.match(r"^(.*?)\s*\((.+?)\)?\s*$", name)
             if m and len(m.group(2)) > 1:
                 name, party = m.group(1).strip(), m.group(2).strip()
         is_nota = bool(NOTA_KW.search(" ".join(own_hdr(c))))
