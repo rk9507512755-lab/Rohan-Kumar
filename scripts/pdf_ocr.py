@@ -143,9 +143,21 @@ def rotation_scores(img):
     return out
 
 
+def first_col_score(prep):
+    """Run length of consecutive booth numbers in the first grid column."""
+    img, ys, xs, info = prep
+    if len(ys) < 6 or len(xs) < 4:
+        return 0
+    cl = clean_lines(img[ys[0]:ys[-1], xs[0]:xs[1]])
+    ws = ocr_strip(cl[:, 3:-3], "eng", 6, "0123456789", scale=1.5)
+    nums = [int(w[2]) for w in sorted(ws, key=lambda w: w[1]) if w[2].isdigit() and len(w[2]) <= 4]
+    return _seq_run(nums)
+
+
 def page_quality(pg):
-    """Share of data rows where some column equals the sum of the columns
-    before it (from column 2) - true for any correctly read Form-20 row."""
+    """Share of data rows where some column equals the sum of the candidate
+    columns before it (candidates start at column 1 or 2) - true for any
+    correctly read Form-20 row."""
     if not pg:
         return 0.0
     ok = n = 0
@@ -154,15 +166,20 @@ def page_quality(pg):
             continue
         n += 1
         c = [_int(r["cells"].get(i, "") or "x") for i in range(len(pg["columns"]))]
-        for j in range(4, len(c)):
-            if c[j] is None:
-                continue
-            head = c[2:j]
-            if None in head:
-                continue
-            if sum(head) == c[j] or (len(head) > 2 and sum(head[:-1]) == c[j]):
-                ok += 1
+        hit = False
+        for start in (1, 2):
+            for j in range(start + 2, len(c)):
+                if c[j] is None:
+                    continue
+                head = c[start:j]
+                if None in head:
+                    continue
+                if sum(head) == c[j] or (len(head) > 2 and sum(head[:-1]) == c[j]):
+                    hit = True
+                    break
+            if hit:
                 break
+        ok += hit
     return ok / n if n else 0.0
 
 

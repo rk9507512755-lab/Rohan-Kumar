@@ -27,7 +27,7 @@ ELECTIONS = {
 def booth_check(b, cands):
     """None if the file gives no total to compare, else whether the
     candidate votes add up to one of the reported totals."""
-    reported = [b.get(k) for k in ("total", "total_valid") if b.get(k) is not None]
+    reported = [b.get(k) for k in ("total", "total_valid", "voters_total") if b.get(k) is not None]
     if not reported:
         return None
     s_all = sum(v or 0 for v in b["votes"])
@@ -116,10 +116,45 @@ def drop_constant_columns(res):
     return res
 
 
+def drop_total_like_columns(res):
+    """A 'candidate' column that equals the sum of the other candidates (or the
+    row Total) in most booths is a misplaced total column (seen in the NOTA
+    slot of some files)."""
+    if not res or len(res["booths"]) < 10 or len(res["candidates"]) < 3:
+        return res
+    nb = [b for b in res["booths"] if not b.get("is_postal")]
+    drop = []
+    for i, c in enumerate(res["candidates"]):
+        hit = n = 0
+        for b in nb:
+            v = b["votes"][i]
+            if not v:
+                continue
+            n += 1
+            rest = sum(x or 0 for j, x in enumerate(b["votes"]) if j != i)
+            if v == rest or v == b.get("total") or v == b.get("total_valid"):
+                hit += 1
+        if n >= 10 and hit >= 0.8 * n:
+            drop.append(i)
+    if not drop or len(drop) >= len(res["candidates"]) - 1:
+        return res
+    names = ", ".join(res["candidates"][i]["name"] or f"#{i + 1}" for i in drop)
+    res["warnings"] = res.get("warnings", []) + [
+        f"column '{names}' holds row totals, not votes - removed" + (" (NOTA votes not available in file)" if any(res["candidates"][i].get("is_nota") for i in drop) else "")]
+    keep = [i for i in range(len(res["candidates"])) if i not in drop]
+    res["candidates"] = [res["candidates"][i] for i in keep]
+    for b in res["booths"]:
+        b["votes"] = [b["votes"][i] for i in keep]
+    for t in res.get("totals", []):
+        if len(t.get("votes", [])) == len(keep) + len(drop):
+            t["votes"] = [t["votes"][i] for i in keep]
+    return res
+
+
 def combine(results):
     """Pick the best sheet result; append sibling parts (same candidates,
     new booths) or merge column-split sheets (same booths, new candidates)."""
-    results = [drop_constant_columns(r) for r in results if r and len(r["booths"]) >= 2]
+    results = [drop_total_like_columns(drop_constant_columns(r)) for r in results if r and len(r["booths"]) >= 2]
     results = [r for r in results if len(r["candidates"]) >= 2]
     if not results:
         return None

@@ -190,13 +190,17 @@ def parse_wide(sheet):
     if "nota" in post:
         c0 = post.pop("nota")
         stop = min([c for c in post.values() if c > c0] + [c0 + 4, ncols])
-        best_c, best_d = c0, -1
+        best_c, best_m = c0, None
         for c in range(c0, stop):
+            if TOTAL_KW.search(col_header(c, list(range(max(0, top - 1), sub + 1)))):
+                continue
             vals = [to_int(rows[r][c]) for r in data_rows[:300]]
             vals = [v for v in vals if v is not None]
-            d = len(set(vals)) if len(vals) >= 0.5 * max(1, min(300, len(data_rows))) else -1
-            if d > best_d:
-                best_c, best_d = c, d
+            if len(vals) < 0.5 * max(1, min(300, len(data_rows))) or len(set(vals)) < 2:
+                continue
+            m = sum(vals) / len(vals)
+            if best_m is None or m < best_m:
+                best_c, best_m = c, m
         cands.append(dict(name="NOTA", hdr_party="", vote_col=best_c, party_cols=[]))
 
     # pre-candidate columns
@@ -274,7 +278,7 @@ def parse_wide(sheet):
     if not booths:
         return None
     for i, cd in enumerate(cands):
-        cd["party"] = party_seen.get(i) or cd["hdr_party"]
+        cd["party"] = cd["hdr_party"] or party_seen.get(i) or ""
         if cd["name"] == "NOTA" or NOTA_KW.search(cd["name"] or "") or NOTA_KW.search(cd["party"] or ""):
             cd["name"], cd["party"], cd["is_nota"] = "NOTA", "NOTA", True
         else:

@@ -370,6 +370,8 @@ def table_from_pages(pages):
                          votes=votes, serial=_int(cells.get(0, "") or "x"))
                 if r.get("src"):
                     b["_src"] = (pi, r["src"])
+                if r.get("knn"):
+                    b["ocr_fix"] = "digits re-read by self-trained reader"
                 for k, c in post.items():
                     b[k] = _int(cells[c]) if c in cells else None
                 booths.append(b)

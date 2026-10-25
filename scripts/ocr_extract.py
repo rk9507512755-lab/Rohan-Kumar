@@ -15,8 +15,9 @@ import fitz  # noqa: E402
 from extract import booth_check  # noqa: E402
 from collections import Counter  # noqa: E402
 
+from glyph_knn import knn_refine  # noqa: E402
 from ocr import render  # noqa: E402
-from pdf_ocr import ocr_grid_page, page_quality, prepare_page, reocr_cell, rotation_scores  # noqa: E402
+from pdf_ocr import first_col_score, ocr_grid_page, page_quality, prepare_page, reocr_cell, rotation_scores  # noqa: E402
 from pdf_table import _int, table_from_pages  # noqa: E402
 
 DIR = "raw/06_Lok_Sabha_2024"
@@ -30,9 +31,10 @@ def repair(res):
     cand_cols = [c["col"] for c in res["candidates"]]
     tv_col = kinds.index("total_valid") if "total_valid" in kinds else None
     fixed = imputed = 0
-    for b in res["booths"]:
-        if booth_check(b, res["candidates"]) is not False or "_src" not in b:
-            continue
+    failing = [b for b in res["booths"] if booth_check(b, res["candidates"]) is False and "_src" in b]
+    if len(failing) > 0.5 * max(1, len(res["booths"])):
+        return 0, 0
+    for b in failing[:150]:
         pi, (band,) = b["_src"]
         ctx = res["use_pages"][pi]["ctx"]
         new = []
@@ -75,27 +77,49 @@ def run(fname):
     try:
         doc = fitz.open(path)
         prepared, first_try = [], []
+        rot_votes = Counter()
         for pg in doc:
             raw = render(pg)
             sc = rotation_scores(raw)
             order = sorted(sc, key=sc.get, reverse=True)
+            preps = {}
+            seq = {}
+            for r in order:
+                preps[r] = prepare_page(pg, rot=r, img=raw)
+                seq[r] = first_col_score(preps[r])
+                if seq[r] >= 8:
+                    break
+            ranked = sorted(preps, key=lambda r: (seq[r], -order.index(r)), reverse=True)
+            if seq[ranked[0]] < 3 and rot_votes:
+                common = rot_votes.most_common(1)[0][0]
+                if common not in preps:
+                    preps[common] = prepare_page(pg, rot=common, img=raw)
+                ranked = [common] + [r for r in ranked if r != common]
             best = None
-            for k, r in enumerate(order):
-                prep = prepare_page(pg, rot=r, img=raw)
+            for r in ranked[:2]:
+                prep = preps[r]
                 pq, pinfo = ocr_grid_page(pg, prepared=prep, want_header=len(prepared) < 2)
                 q = page_quality(pq)
+                if pq is not None and q < 0.9:
+                    knn_refine([pq])
+                    q = page_quality(pq)
                 if best is None or q > best[0]:
                     best = (q, prep, pq, pinfo)
                 if q >= 0.5:
                     break
             prepared.append(best[1])
+            if best[0] >= 0.5:
+                rot_votes[best[1][3]["rot"]] += 1
             first_try.append((best[2], best[3], best[0]))
-        counts = Counter(len(p[2]) for p in prepared if len(p[2]) >= 6 and len(p[1]) >= 6)
+        good = [i for i, ft in enumerate(first_try) if ft[2] >= 0.5]
+        pool = good if good else list(range(len(prepared)))
+        counts = Counter(len(prepared[i][2]) for i in pool if len(prepared[i][2]) >= 6 and len(prepared[i][1]) >= 6)
         ref = None
         if counts:
             m = counts.most_common(1)[0][0]
             norms = []
-            for img, ys, xs, info in prepared:
+            for i in pool:
+                img, ys, xs, info = prepared[i]
                 if len(xs) == m:
                     x0, x1 = xs[0], xs[-1]
                     norms.append([(x - x0) / (x1 - x0) for x in xs])
@@ -118,6 +142,8 @@ def run(fname):
                 got_header += 1
             infos.append(info)
             pages.append(p)
+        kfix, _ = knn_refine([p for p in pages if p])
+        rec["notes"].append(f"OCR: {kfix} rows corrected by self-trained digit reader")
         res = table_from_pages(pages)
         if not res:
             rec.update(status="OCR_FAILED", page_info=infos)

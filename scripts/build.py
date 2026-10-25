@@ -81,7 +81,7 @@ def clean_cand_name(n):
     return n
 
 
-HDR_AC = re.compile(r"(?:constitu\w*|AC|सभा|क्षेत्र)\W{0,6}(?:no\.?\s*&?\s*name\W*)?_*(\d{1,3})\s*[-_ ]+\s*([A-Za-zऀ-ॿ][A-Za-zऀ-ॿ .()]{1,40}?)(?=\s+(?:UTTAR|UTTER|District|DISTRICT|जनपद|विधानसभा)|\s*$|\s{2})", re.I)
+HDR_AC = re.compile(r"(?:constitu\w*|AC|सभा|क्षेत्र)\W{0,6}(?:no\.?\s*&?\s*name\W*)?_*(\d{1,3})\s*[-_ ]+\s*([A-Za-zऀ-ॿ][A-Za-zऀ-ॿ .()]{1,40}?)(?=\s+(?:UTTAR|UTTER|District|DISTRICT|जनपद|विधानसभा|Date|DATE|दिनांक|चक्र|Round|ROUND|Polling|AC\s*No)|\s*$|\s{2})", re.I)
 DIST_RE = re.compile(r"District\s*[-:_ ]*\s*_*([A-Za-z][A-Za-z .]{2,40}?)_*\s+(?:AC|A\.C|Polling|No|$)", re.I)
 
 
@@ -151,10 +151,10 @@ def quality(e, ac, r, others, names=None, dup_of=None):
     if rate is not None and rate < 0.95:
         diffs = collections.Counter()
         for b in B:
-            t = b.get("total") if b.get("total") is not None else b.get("total_valid")
+            t = next((b.get(k) for k in ("total", "total_valid", "voters_total") if b.get(k) is not None), None)
             if t is not None:
                 diffs[t - sum(v or 0 for v in b["votes"])] += 1
-        top, cnt = diffs.most_common(1)[0]
+        top, cnt = diffs.most_common(1)[0] if diffs else (0, 0)
         tri = n_real * (n_real + 1) // 2
         if top in (tri - 1, tri) and cnt >= 0.8 * sum(diffs.values()):
             flags.append(f"file's Total column wrongly includes candidate serial numbers (+{top} in every booth); candidate votes unaffected")
@@ -176,7 +176,8 @@ def quality(e, ac, r, others, names=None, dup_of=None):
             flags.append(f"booth sums match the file's total row for {match}/{len(cands)} candidates")
     hno, hname, _, years = header_meta(r)
     hdr_mismatch = False
-    if hno and hno != ac and names:
+    own_sheet = any(str(n).startswith("used sheet") for n in r.get("notes", []))
+    if hno and hno != ac and names and not own_sheet:
         known = _nm(names.get(hno, ("", ""))[0])
         if known and _nm(hname) and (_nm(hname).startswith(known[:5]) or known.startswith(_nm(hname)[:5])):
             hdr_mismatch = True
@@ -197,10 +198,12 @@ def quality(e, ac, r, others, names=None, dup_of=None):
     if zero_booths > max(2, 0.05 * max(1, len(nb))):
         flags.append(f"{zero_booths} booths with zero votes")
     if r.get("source") == "ocr":
+        nknn = sum(1 for b in B if b.get("ocr_fix", "").startswith("digits"))
         nfix = sum(1 for b in B if b.get("ocr_fix", "").startswith("cell"))
         nimp = sum(1 for b in B if b.get("ocr_fix", "").startswith("imputed"))
         nbf = sum(1 for b in B if b.get("booth_fix"))
-        flags.append(f"OCR of scanned PDF: {nfix} rows re-read cell by cell, {nimp} cells imputed from row totals, {nbf} booth numbers repaired")
+        flags.append(f"OCR of scanned PDF: {nknn} rows corrected by self-trained digit reader, {nfix} rows re-read cell by cell, "
+                     f"{nimp} cells imputed from row totals, {nbf} booth numbers repaired")
     for w in r.get("warnings", []) + r.get("notes", []):
         if w and "OCR:" not in w:
             flags.append(w)
@@ -228,6 +231,43 @@ def quality(e, ac, r, others, names=None, dup_of=None):
     return q
 
 
+def borrow_ls_names(chosen):
+    """OCR'd Lok Sabha ACs: copy candidate names/parties from a text-parsed AC
+    of the same parliamentary constituency (same ballot). The donor must be a
+    nearby AC with the same number of candidates whose vote shares, in ballot
+    order, correlate strongly and clearly better than any other donor."""
+    import numpy as np
+    def shares(r):
+        v = np.array([sum(b["votes"][i] or 0 for b in r["booths"]) for i in range(len(r["candidates"]))], float)
+        return v / v.sum() if v.sum() else v
+    for (e, ac), r in chosen.items():
+        if e != "LS2024" or r.get("source") != "ocr" or r.get("status") != "OK":
+            continue
+        n = len(r["candidates"])
+        sv = shares(r)
+        scored = []
+        for d in range(1, 8):
+            for a2 in (ac - d, ac + d):
+                r2 = chosen.get((e, a2))
+                if not r2 or r2.get("source") == "ocr" or r2.get("status") != "OK" or len(r2["candidates"]) != n:
+                    continue
+                s2 = shares(r2)
+                if sv.std() == 0 or s2.std() == 0:
+                    continue
+                scored.append((float(np.corrcoef(sv, s2)[0, 1]), a2, r2))
+        if not scored:
+            continue
+        scored.sort(key=lambda x: -x[0])
+        best = scored[0]
+        if best[0] >= 0.95 and (len(scored) == 1 or best[0] - scored[1][0] >= 0.02 or
+                                [c["name"] for c in scored[1][2]["candidates"]] == [c["name"] for c in best[2]["candidates"]]):
+            for c, c2 in zip(r["candidates"], best[2]["candidates"]):
+                c["ocr_name"] = c["name"]
+                c["name"], c["party"], c["is_nota"] = c2["name"], c2.get("party", ""), c2.get("is_nota", False)
+            r.setdefault("notes", []).append(
+                f"candidate names/parties taken from AC {best[1]} (same ballot; vote-share correlation {best[0]:.3f})")
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
     recs = load_all()
@@ -243,6 +283,7 @@ def main():
     for r in chosen.values():
         if r.get("source") == "ocr" and r.get("status") == "OK":
             repair_sequence(r)
+    borrow_ls_names(chosen)
     names = ac_names({k: v for k, v in chosen.items() if v.get("status") == "OK"})
     sigs = collections.defaultdict(list)
     for (e, ac), r in chosen.items():
@@ -279,6 +320,11 @@ def main():
         cands = r["candidates"]
         for c in cands:
             c["name"] = clean_cand_name(c["name"]) or ("NOTA" if c.get("is_nota") else "")
+            pty = (c.get("party") or "").strip()
+            if len(pty) > 3 and not c.get("is_nota"):
+                k = c["name"].lower().find(pty.lower()[:10])
+                if k > 2:
+                    c["name"] = c["name"][:k].strip(" -,(/")
             c["party_std"] = "NOTA" if c.get("is_nota") else std_party(c.get("party"))
         seen = collections.Counter()
         totals = [0] * len(cands)
