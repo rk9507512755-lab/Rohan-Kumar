@@ -9,3 +9,4 @@ rm -rf data && mkdir -p data
 python3 -I scripts/build.py data
 xz -T4 -6 -f data/UP_Form20.sqlite
 python3 -I scripts/make_readme.py .
+python3 -I scripts/missing_report.py data

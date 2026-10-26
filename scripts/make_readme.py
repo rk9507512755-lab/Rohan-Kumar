@@ -132,6 +132,12 @@ WHERE v.election='VS2022' AND c.party_std='BJP' AND b.is_postal=0;
   se exact milaya gaya (`method` column).
 * Drive par Lok Sabha 2014 ki 112 ACs, Vidhan Sabha 2017 ki 19 ACs aur Lok Sabha 2024 ki ~120 ACs ki files hi nahi hain.
 
+## Missing data ki poori listing
+
+`data/missing/` mein: kaun si AC kyun missing/adhoori hai (source URL ke saath), booth-number gaps, bina party
+wale candidates, aur 2017–2024 ke woh bye-elections jo Drive par hain hi nahi. Details: `data/missing/README.md`.
+Missing files apne computer par `python3 scripts/fetch_missing.py` se original source se utha sakte hain.
+
 ## Jo ACs dataset mein nahi hain / data withheld
 
 | Election | AC | Naam | Status | Kaaran |

@@ -95,15 +95,21 @@ WHERE v.election='VS2022' AND c.party_std='BJP' AND b.is_postal=0;
   se exact milaya gaya (`method` column).
 * Drive par Lok Sabha 2014 ki 112 ACs, Vidhan Sabha 2017 ki 19 ACs aur Lok Sabha 2024 ki ~120 ACs ki files hi nahi hain.
 
+## Missing data ki poori listing
+
+`data/missing/` mein: kaun si AC kyun missing/adhoori hai (source URL ke saath), booth-number gaps, bina party
+wale candidates, aur 2017–2024 ke woh bye-elections jo Drive par hain hi nahi. Details: `data/missing/README.md`.
+Missing files apne computer par `python3 scripts/fetch_missing.py` se original source se utha sakte hain.
+
 ## Jo ACs dataset mein nahi hain / data withheld
 
 | Election | AC | Naam | Status | Kaaran |
 |---|---|---|---|---|
-| LS2014 | 87 | Agra | NO_TABLE_FOUND | NO_TABLE_FOUND |
-| LS2014 | 88 | Agra | NO_TABLE_FOUND | NO_TABLE_FOUND |
-| LS2014 | 89 | Agra | NO_TABLE_FOUND | NO_TABLE_FOUND |
-| LS2014 | 90 | Agra | NO_TABLE_FOUND | NO_TABLE_FOUND |
-| LS2014 | 91 | Fatehpur | NO_TABLE_FOUND | NO_TABLE_FOUND |
+| LS2014 | 87 | Agra Cantt | NO_TABLE_FOUND | NO_TABLE_FOUND |
+| LS2014 | 88 | Agra South | NO_TABLE_FOUND | NO_TABLE_FOUND |
+| LS2014 | 89 | Agra North | NO_TABLE_FOUND | NO_TABLE_FOUND |
+| LS2014 | 90 | Agra Rural | NO_TABLE_FOUND | NO_TABLE_FOUND |
+| LS2014 | 91 | Fatehpur Sikri | NO_TABLE_FOUND | NO_TABLE_FOUND |
 | LS2014 | 92 | Kheragarh | NO_TABLE_FOUND | NO_TABLE_FOUND |
 | LS2014 | 93 | Fatehabad | NO_TABLE_FOUND | NO_TABLE_FOUND |
 | LS2014 | 94 | Bah | NO_TABLE_FOUND | NO_TABLE_FOUND |
@@ -117,7 +123,7 @@ WHERE v.election='VS2022' AND c.party_std='BJP' AND b.is_postal=0;
 | LS2024 | 155 | Shahabad | NEEDS_OCR | NEEDS_OCR |
 | LS2024 | 166 | Bhagwantnagar | NEEDS_OCR | NEEDS_OCR |
 | LS2024 | 179 | Harchandpur | NEEDS_OCR | NEEDS_OCR |
-| VS2012 | 323 | Gorakhpur | NO_TABLE_FOUND | NO_TABLE_FOUND |
+| VS2012 | 323 | Gorakhpur Rural | NO_TABLE_FOUND | NO_TABLE_FOUND |
 | VS2017 | 57 | Modinagar | NO_TABLE_FOUND | NO_TABLE_FOUND |
 | VS2022 | 53 | Loni | WRONG_FILE | WRONG_FILE: file holds the booth data of AC 240 (identical rows); data withheld for this AC |
 

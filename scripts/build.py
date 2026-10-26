@@ -101,16 +101,25 @@ def header_meta(r):
 def ac_names(chosen):
     names = collections.defaultdict(collections.Counter)
     dists = collections.defaultdict(collections.Counter)
+    # the Drive's download log has clean AC + district names for the 2024 files
+    st = "raw/00_MASTER/_download_status.json"
+    if os.path.exists(st):
+        for x in json.load(open(st)):
+            if x.get("election") == "2024" and x.get("name") and not x["name"].lower().startswith("ac_no"):
+                names[x["ac"]][x["name"].strip()] += 50
+                if x.get("district"):
+                    dists[x["ac"]][x["district"].strip()] += 50
     for f in os.listdir("raw/06_Lok_Sabha_2024"):
-        m = re.match(r"AC(\d+)_([^_.]+)", f)
+        m = re.match(r"AC(\d+)_(.+)\.pdf$", f)
         if m:
-            names[int(m.group(1))][m.group(2).replace("_", " ")] += 5
+            names[int(m.group(1))][m.group(2).replace("_", " ")] += 2
     for (e, ac), r in chosen.items():
         hno, hname, dist, _ = header_meta(r)
         if hno == ac and hname and re.match(r"[A-Za-z]", hname):
             names[ac][hname.title()] += 1
-        if dist and hno == ac:
-            dists[ac][dist.title()] += 1
+        if dist and hno == ac and re.fullmatch(r"[A-Za-z ]{3,30}", dist.strip(" .")) and \
+                not re.search(r"\b(ac|no|sl|polling)\b", dist, re.I):
+            dists[ac][dist.strip(" .").title()] += 1
     out = {}
     for ac in range(1, 404):
         nm = names[ac].most_common(1)[0][0] if names[ac] else ""
