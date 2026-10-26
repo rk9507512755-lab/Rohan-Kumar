@@ -8,7 +8,7 @@ Ye files `scripts/missing_report.py` se bani hain. Har row mein kaaran aur aage 
 |---|---|---|---|---|---|---|---|---|
 | LS2014 | 4 | 8 | 112 | 0 | 10 | 3 | 0 | 0 |
 | LS2019 | 0 | 0 | 1 | 0 | 4 | 1 | 0 | 1 |
-| LS2024 | 62 | 0 | 0 | 74 | 25 | 0 | 9 | 0 |
+| LS2024 | 2 | 0 | 0 | 73 | 40 | 0 | 27 | 0 |
 | VS2012 | 0 | 1 | 0 | 0 | 17 | 1 | 0 | 0 |
 | VS2017 | 19 | 1 | 0 | 0 | 6 | 4 | 0 | 0 |
 | VS2022 | 0 | 0 | 0 | 0 | 2 | 1 | 0 | 1 |
@@ -26,11 +26,11 @@ Category ka matlab:
 
 ## 2. Booth-number gaps — `booth_number_gaps.csv`
 
-142 ACs mein kuch booth numbers nahi mile (kul 12,100). Bahut bade, AC ke booth count se door ke numbers (zyadatar OCR misread) `suspicious_booth_numbers` mein alag likhe hain.
+185 ACs mein kuch booth numbers nahi mile (kul 15,375). Bahut bade, AC ke booth count se door ke numbers (zyadatar OCR misread) `suspicious_booth_numbers` mein alag likhe hain.
 
 ## 3. Candidates jinki party/naam file mein nahi — `candidates_missing_party_or_name.csv`
 
-6,209 candidate entries (NOTA ke alawa). Inme LS2024 ke lagbhag saare hain kyunki 2024 ke Form-20 PDFs mein party nahi hoti.
+6,619 candidate entries (NOTA ke alawa). Inme LS2024 ke lagbhag saare hain kyunki 2024 ke Form-20 PDFs mein party nahi hoti.
 
 ## 4. Bye-elections jo Drive par hain hi nahi — `bye_elections_not_on_drive.csv`
 
@@ -85,10 +85,10 @@ Ye list web search se verify ki gayi (Oct 2026): [Wikipedia: List of by-election
 
 ## Internet se khud nikalne ki koshish
 
-Is cloud session ki network policy ne saare source sites block ki hui hain: `ceouttarpradesh.nic.in`, `cdn.s3waas.gov.in` (district portals ki files), `results.eci.gov.in`, `eci.gov.in`, district `*.nic.in` portals, `web.archive.org`, `lokdhaba.ashoka.edu.in`. Isliye in files ko is session se download nahi kiya ja saka (koi data andaaze se nahi bhara gaya).
+Network access badalne ke baad (Oct 2026): `cdn.s3waas.gov.in` (district portals ki files) se Lok Sabha 2024 ki 66 missing PDFs download ho gayi aur dataset mein jod di gayi (jo scans OCR mein kamzor rahe, wo withheld hain). 4 URLs ab source par bhi 404 hain. `ceouttarpradesh.nic.in` tak policy allow karti hai, par wo server is cloud se aane wala har connection TLS handshake par hi reset kar deta hai (shayad India ke bahar ke IP block) — isliye LS2014 ki 4 aur VS2017 ki 19 files (aur 404 wali 112) yahan se nahi aa sakti. `results.eci.gov.in` aur district `*.nic.in` portals abhi bhi blocked hain.
 
 **Aage kaise:**
 
-1. Apne computer par (jahan ye sites khulti hain): `python3 scripts/fetch_missing.py` — `DOWNLOADED_BUT_NOT_ON_DRIVE` wali files unke original URL se `raw/` mein aa jaayengi; `--retry-404` se 404 wale URLs bhi dobara try honge. Phir pipeline dobara chalayein (README dekhein).
-2. Ya Claude cloud environment ki Network access settings mein `ceouttarpradesh.nic.in` aur `cdn.s3waas.gov.in` allow kar dein — phir agle session mein main ye khud download karke dataset update kar sakta hoon.
+1. India ke kisi normal internet connection par: `python3 scripts/fetch_missing.py` (aur `--retry-404`), phir pipeline dobara chalayein (README dekhein).
+2. Ya `results.eci.gov.in` aur zaroori district `*.nic.in` domains bhi allow karein.
 3. `NO_SOURCE_URL` wali 2024 ACs ke Form-20 PDFs district DEO portals par hain (jaise `varanasi.nic.in/form-20/`).

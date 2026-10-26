@@ -19,10 +19,10 @@ sheets hain (booth-wise nahi), unka alag table hai.
 | Vidhan Sabha 2017 | 384 | 383 | 140,043 | 83,742,119 | 365 / 8 / 6 / 4 | 20 |
 | Lok Sabha 2019 | 402 | 401 | 162,705 | 88,129,592 | 390 / 6 / 4 / 1 | 2 |
 | Vidhan Sabha 2022 | 403 | 402 | 174,371 | 93,573,406 | 389 / 10 / 2 / 1 | 1 |
-| Lok Sabha 2024 | 280 | 258 | 93,506 | 55,211,096 | 212 / 21 / 25 / 0 | 145 |
+| Lok Sabha 2024 | 280 | 301 | 106,973 | 78,496,640 | 216 / 45 / 40 / 0 | 102 |
 
-Total: **802,919 polling-station rows**; inme se 761,331 booths par candidate votes ka jod file ke apne
-"Total" column se exact milta hai, 31,206 booths ki file mein total column hi nahi tha.
+Total: **816,386 polling-station rows**; inme se 773,275 booths par candidate votes ka jod file ke apne
+"Total" column se exact milta hai, 31,250 booths ki file mein total column hi nahi tha.
 
 **Grade:** A = ≥98% booths ka jod file ke total se milta hai · B = ≥90%, ya file ke Total column mein
 pehchani hui systematic galti (jaise S.No. column bhi jud gaya), ya file mein total column hi nahi par
@@ -42,7 +42,7 @@ candidates (`?`) ki wajah se hai. Lok Sabha mein ye AC-segment ke "leader" hain,
 | Vidhan Sabha 2017 | 383 | BJP 275, SP 42, ? 26, BSP 16, ADAL 9, INC 6, SBSP 4, RLD 1 |
 | Lok Sabha 2019 | 401 | BJP 256, BSP 65, SP 40, ? 13, ADAL 9, INC 8, RLD 4, IND 2 |
 | Vidhan Sabha 2022 | 402 | BJP 221, SP 102, ? 40, ADAL 11, RLD 8, SBSP 6, NISHAD 3, IND 2 |
-| Lok Sabha 2024 | 258 | 2024 ke Form-20 PDFs mein party nahi likhi hoti, isliye ye tally sambhav nahi |
+| Lok Sabha 2024 | 301 | 2024 ke Form-20 PDFs mein party nahi likhi hoti, isliye ye tally sambhav nahi |
 
 ## Files (`data/`)
 
@@ -123,6 +123,24 @@ Missing files apne computer par `python3 scripts/fetch_missing.py` se original s
 | LS2024 | 155 | Shahabad | NEEDS_OCR | NEEDS_OCR |
 | LS2024 | 166 | Bhagwantnagar | NEEDS_OCR | NEEDS_OCR |
 | LS2024 | 179 | Harchandpur | NEEDS_OCR | NEEDS_OCR |
+| LS2024 | 192 | Kaimganj | NEEDS_OCR | NEEDS_OCR |
+| LS2024 | 193 | Amritpur | NEEDS_OCR | NEEDS_OCR |
+| LS2024 | 194 | Farrukhabad | NEEDS_OCR | NEEDS_OCR |
+| LS2024 | 195 | Bhojpur | NEEDS_OCR | NEEDS_OCR |
+| LS2024 | 221 | Orai | NEEDS_OCR | NEEDS_OCR |
+| LS2024 | 237 | Manikpur | NEEDS_OCR | NEEDS_OCR |
+| LS2024 | 270 | Dariyabad | NEEDS_OCR | NEEDS_OCR |
+| LS2024 | 271 | Rudauli | NEEDS_OCR | NEEDS_OCR |
+| LS2024 | 273 | Milkipur(SC) | NEEDS_OCR | NEEDS_OCR |
+| LS2024 | 274 | Bikapur | NEEDS_OCR | NEEDS_OCR |
+| LS2024 | 275 | Ayodhya | NEEDS_OCR | NEEDS_OCR |
+| LS2024 | 283 | Nanpara | NEEDS_OCR | NEEDS_OCR |
+| LS2024 | 286 | Bahraich | NEEDS_OCR | NEEDS_OCR |
+| LS2024 | 293 | Utraula | NEEDS_OCR | NEEDS_OCR |
+| LS2024 | 295 | Mehnaun | NEEDS_OCR | NEEDS_OCR |
+| LS2024 | 297 | Katra Bazar | NEEDS_OCR | NEEDS_OCR |
+| LS2024 | 299 | Tarabganj | NEEDS_OCR | NEEDS_OCR |
+| LS2024 | 398 | Chunar | NEEDS_OCR | NEEDS_OCR |
 | VS2012 | 323 | Gorakhpur Rural | NO_TABLE_FOUND | NO_TABLE_FOUND |
 | VS2017 | 57 | Modinagar | NO_TABLE_FOUND | NO_TABLE_FOUND |
 | VS2022 | 53 | Loni | WRONG_FILE | WRONG_FILE: file holds the booth data of AC 240 (identical rows); data withheld for this AC |

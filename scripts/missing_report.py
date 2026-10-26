@@ -107,16 +107,16 @@ def write_md(acdf, gdf, cm, bye, summ):
           "[Deccan Herald (2023)](https://www.deccanherald.com/amp/story/india%2Fup-bypolls-suar-and-chhanbey-assembly-seats-to-see-voting-on-may-10-1204726.html). "
           "Isme 2012–2016 ke kuch bye-elections chhoot sakte hain jo search mein nahi aaye.", "",
           "## Internet se khud nikalne ki koshish", "",
-          "Is cloud session ki network policy ne saare source sites block ki hui hain: `ceouttarpradesh.nic.in`, "
-          "`cdn.s3waas.gov.in` (district portals ki files), `results.eci.gov.in`, `eci.gov.in`, district `*.nic.in` "
-          "portals, `web.archive.org`, `lokdhaba.ashoka.edu.in`. Isliye in files ko is session se download nahi kiya ja saka "
-          "(koi data andaaze se nahi bhara gaya).", "",
+          "Network access badalne ke baad (Oct 2026): `cdn.s3waas.gov.in` (district portals ki files) se Lok Sabha 2024 "
+          "ki 66 missing PDFs download ho gayi aur dataset mein jod di gayi (jo scans OCR mein kamzor rahe, wo withheld hain). "
+          "4 URLs ab source par bhi 404 hain. `ceouttarpradesh.nic.in` tak policy allow karti hai, par wo server is "
+          "cloud se aane wala har connection TLS handshake par hi reset kar deta hai (shayad India ke bahar ke IP block) — "
+          "isliye LS2014 ki 4 aur VS2017 ki 19 files (aur 404 wali 112) yahan se nahi aa sakti. "
+          "`results.eci.gov.in` aur district `*.nic.in` portals abhi bhi blocked hain.", "",
           "**Aage kaise:**", "",
-          "1. Apne computer par (jahan ye sites khulti hain): `python3 scripts/fetch_missing.py` — "
-          "`DOWNLOADED_BUT_NOT_ON_DRIVE` wali files unke original URL se `raw/` mein aa jaayengi; "
-          "`--retry-404` se 404 wale URLs bhi dobara try honge. Phir pipeline dobara chalayein (README dekhein).",
-          "2. Ya Claude cloud environment ki Network access settings mein `ceouttarpradesh.nic.in` aur `cdn.s3waas.gov.in` "
-          "allow kar dein — phir agle session mein main ye khud download karke dataset update kar sakta hoon.",
+          "1. India ke kisi normal internet connection par: `python3 scripts/fetch_missing.py` (aur `--retry-404`), "
+          "phir pipeline dobara chalayein (README dekhein).",
+          "2. Ya `results.eci.gov.in` aur zaroori district `*.nic.in` domains bhi allow karein.",
           "3. `NO_SOURCE_URL` wali 2024 ACs ke Form-20 PDFs district DEO portals par hain (jaise `varanasi.nic.in/form-20/`).", ""]
     open(f"{OUT}/README.md", "w", encoding="utf-8").write("\n".join(L))
 
