@@ -98,7 +98,7 @@ ac_no,ac_name,district
 97,Firozabad,Firozabad
 98,Shikohabad,Firozabad
 99,Sirsaganj,Firozabad
-100,,
+100,Kasganj Ac. No,Kasganj
 101,,
 102,Patiyali),Kasganj
 103,Aliganj,Etah
@@ -137,7 +137,7 @@ ac_no,ac_name,district
 136,Dadraul,Shahjahanpur
 137,Palia,Kheri
 138,Nighasan,Kheri
-139,Gola Gokrannath,Kheri
+139,Gola Gokrannath,Ac No.
 140,Srinagar(S.C.),Kheri
 141,Dhaurahra,Kheri
 142,Lakhimpur,Kheri
@@ -168,7 +168,7 @@ ac_no,ac_name,district
 167,Purwa,
 168,Malihabad,Lucknow
 169,Bakshi,Lucknow
-170,Sarojini,Lucknow
+170,Sarojini,Lucknow Sl.
 171,Lucknow,
 172,Lucknow,Lucknow Sl.
 173,Lucknow,Lucknow Sl.

@@ -127,8 +127,11 @@ def grid(img):
     ys = _peaks(hp, max(0.15 * w, 0.45 * hp.max()), 8)
     if len(ys) >= 2:
         top, bot = ys[0], ys[-1]
+        # close small breaks in thin / faint column rules before isolating them
+        bwc = cv2.morphologyEx(bw, cv2.MORPH_CLOSE, cv2.getStructuringElement(cv2.MORPH_RECT, (1, 9)))
+        _, vert = line_masks(bwc)
         vp = vert[top:bot].sum(axis=0) / 255
-        xs = _peaks(vp, max(0.15 * (bot - top), 0.4 * vp.max()), 8)
+        xs = _peaks(vp, max(0.15 * (bot - top), 0.25 * vp.max()), 8)
     else:
         xs = []
     return ys, xs, bw
@@ -142,7 +145,12 @@ def ocr_strip(img, lang, psm, whitelist=None, scale=2.0):
     cfg = f"--psm {psm} --oem 1"
     if whitelist:
         cfg += f" -c tessedit_char_whitelist={whitelist}"
-    d = pytesseract.image_to_data(im, lang=lang, config=cfg, output_type=pytesseract.Output.DICT)
+    if im.shape[0] < 30 or im.shape[1] < 30:
+        return []
+    try:
+        d = pytesseract.image_to_data(im, lang=lang, config=cfg, output_type=pytesseract.Output.DICT)
+    except pytesseract.TesseractError:
+        return []
     out = []
     for i, t in enumerate(d["text"]):
         t = (t or "").strip()

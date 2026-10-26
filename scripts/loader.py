@@ -41,7 +41,7 @@ def _decrypt(raw):
     return out.getvalue()
 
 
-_KD_SIGNS = re.compile("[a-z][;'\\[\\]|&>?]|>|[a-z]Z\\b|\\b(?:dqekj|flag|flg|izk0|fo0|ikVhZ|Hkkjrh;|ernku|LFky|;ksx|dqy|ek/;fed|izkFkfed|xzke|uxj|ifj\"kn|lHkk|fuokZpu|fo\\|ky;|vH;FkhZ|bafM;u)\\b|¼|½|ñ|[a-z][A-Z][a-z]")
+_KD_SIGNS = re.compile("[a-z][;'\\[\\]|&>?]|>|[a-z]Z\\b|\\b(?:dqekj|flag|flg|izk0|fo0|ikVhZ|Hkkjrh;|ernku|LFky|;ksx|dqy|ek/;fed|izkFkfed|xzke|uxj|ifj\"kn|lHkk|fuokZpu|fo\\|ky;|vH;FkhZ|bafM;u|dq0|eks0|Mk0|izlkn|nsoh|dqekjh|feJk|;kno|xqIrk|oekZ|'kekZ|ikloku|vgen|\\[kku|jktiwr|ikaMs;|Bkdqj|frokjh|nqcs|'kqDyk|ekS;Z|ikB'kkyk|fo|ky;)\\b|¼|½|ñ|[a-z][A-Z][a-z]")
 
 
 def kd_score(s):
@@ -55,7 +55,22 @@ def kd_score(s):
     return k + 0.35 * len(_KD_SIGNS.findall(s))
 
 
-def _fix_unflagged_kruti(rows):
+_EN_PREFIX = re.compile(r"^((?:candidate'?s?\s*name|name\s*of\s*(?:the\s*)?candidate)\s*[-:.]?\s*)(.*)$", re.I)
+
+
+def _conv(v):
+    m = _EN_PREFIX.match(v)
+    if m and m.group(2):
+        return _clean(m.group(1) + kd2uni(m.group(2)))
+    return _clean(kd2uni(v))
+
+
+def _score(v):
+    m = _EN_PREFIX.match(v)
+    return kd_score(m.group(2)) if m and m.group(2) else kd_score(v)
+
+
+def _fix_unflagged_kruti(rows, font_kruti=0):
     """Convert Kruti Dev text stored under a non-Kruti font.
 
     A sheet is treated as Kruti-encoded when a good share of its longer
@@ -65,14 +80,15 @@ def _fix_unflagged_kruti(rows):
              if v and sum(ch.isalpha() and ch.isascii() for ch in v) >= 4 and v.upper() != v]
     if not cells:
         return 0
-    hits = [(r, c) for r, c in cells if kd_score(rows[r][c]) >= 0.2]
-    if len(hits) < max(3, 0.25 * len(cells)):
-        return 0
+    hits = [(r, c) for r, c in cells if _score(rows[r][c]) >= 0.2]
+    sheet_is_kruti = len(hits) >= max(3, 0.25 * len(cells)) or font_kruti >= 10
+    # a cell that scores very high is converted even in a mostly-English sheet
+    cut = 0.21 if sheet_is_kruti else 0.5
     n = 0
     for r, row in enumerate(rows):
         for c, v in enumerate(row):
-            if v and kd_score(v) > 0.21:
-                row[c] = _clean(kd2uni(v))
+            if v and _score(v) > cut:
+                row[c] = _conv(v)
                 n += 1
     return n
 
@@ -82,7 +98,7 @@ class Sheet:
         self.name = name
         self.rows = rows          # list[list[str]]
         self.kd_cells = kd_cells  # number of cells converted from Kruti Dev
-        self.kd_heuristic = _fix_unflagged_kruti(rows)
+        self.kd_heuristic = _fix_unflagged_kruti(rows, kd_cells)
         self.ncols = max((len(r) for r in rows), default=0)
         for r in rows:
             r.extend([""] * (self.ncols - len(r)))

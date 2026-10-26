@@ -228,35 +228,31 @@ def process(path):
         elif not mine and len(others_numbered) >= 2:
             rec["notes"].append("workbook holds sheets for other ACs only (" +
                                 ", ".join(str(x) for x in sorted(others_numbered)) + ")")
-        cands = []
-        for sh in use_sheets:
-            if sh.nrows < 4:
-                continue
-            for fn in (parse_wide, parse_simple, parse_triplet):
-                try:
-                    r = fn(sh)
-                except Exception as e:  # keep going with other parsers
-                    rec["notes"].append(f"{fn.__name__} failed on sheet {sh.name}: {e!r}"[:200])
-                    r = None
-                if r:
-                    r["sheet"] = sh.name
-                    cands.append(r)
-        res = combine(cands)
-        if (res is None or score(res) < 5) and use_sheets is not sheets:
-            cands = []
-            for sh in sheets:
+        def parse_sheets(shs):
+            out = []
+            for sh in shs:
                 if sh.nrows < 4:
                     continue
                 for fn in (parse_wide, parse_simple, parse_triplet):
                     try:
                         r = fn(sh)
-                    except Exception:
+                    except Exception as e:  # keep going with other parsers
+                        rec["notes"].append(f"{fn.__name__} failed on sheet {sh.name}: {e!r}"[:200])
                         r = None
                     if r:
                         r["sheet"] = sh.name
-                        cands.append(r)
-            res = combine(cands)
-            rec["notes"].append("sheet named after this AC had no usable table; used other sheets")
+                        out.append(r)
+            return out
+
+        res = combine(parse_sheets(use_sheets))
+        if use_sheets is not sheets:
+            res_all = combine(parse_sheets([sh for sh in sheets if numbered[sh.name] in (None, ac)]))
+            rm = check_rate(res) if res else None
+            ra = check_rate(res_all) if res_all else None
+            if res is None or score(res) < 5 or (ra is not None and (rm is None or ra >= rm + 0.03)):
+                res = res_all
+                rec["notes"] = [n for n in rec["notes"] if not n.startswith("used sheet")]
+                rec["notes"].append("sheet named after this AC was weaker; used the best sheet of the workbook")
         if res is None or score(res) < 5:
             rr = parse_rounds(sheets)
             if rr and score(rr) > score(res):

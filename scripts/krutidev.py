@@ -116,6 +116,8 @@ def kd2uni(text):
     s = _move_reph(s)
     # matra + nukta order fix and doubled signs
     s = re.sub("([ािीुूृेैोौ])़", "़\\1", s)
+    # vowel sign must precede anusvara / chandrabindu (कँुवर -> कुँवर)
+    s = re.sub("([ंँ])([ुूृेैोौािी])", "\\2\\1", s)
     return s
 
 

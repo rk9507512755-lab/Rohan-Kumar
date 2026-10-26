@@ -11,7 +11,11 @@ import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
 from extract import booth_check  # noqa: E402
-from parties import std_party  # noqa: E402
+from parse_wide import HDR_JUNK, VOTE_KW  # noqa: E402
+from parties import split_name_party, std_party  # noqa: E402
+
+BAD_PARTY = re.compile(r"^(\W*|.*?\W*s\W*l?\W*n\W*[o0]\W*\d*\W*|[^A-Za-z\u0900-\u097F]*[A-Za-z\u0900-\u097F]?[^A-Za-z\u0900-\u097F]*)$", re.I)
+JUNK_NAME = re.compile(r"^\W*\d*\W*$|^(and party|candidate.*|s\.?\s*no.*)$", re.I)
 
 OUT = sys.argv[1] if len(sys.argv) > 1 else "/home/user/rohan-kumar/data"
 ELECTIONS = [("VS2012", "Vidhan Sabha", 2012), ("LS2014", "Lok Sabha", 2014), ("VS2017", "Vidhan Sabha", 2017),
@@ -240,8 +244,23 @@ def borrow_ls_names(chosen):
     def shares(r):
         v = np.array([sum(b["votes"][i] or 0 for b in r["booths"]) for i in range(len(r["candidates"]))], float)
         return v / v.sum() if v.sum() else v
+    LABEL = re.compile(r"निर्वाचन|संख्या|पक्ष|अभ्यर्थ|क्षेत्र|मतों|सभा|लोक|विधान|[|{}<>\[\]~@#]|\d{3,}")
+
+    def bad_names(r):
+        from loader import kd_score
+        names = [c["name"] for c in r["candidates"] if not c.get("is_nota")]
+        if not names:
+            return True
+        bad = sum(1 for n in names if not n or LABEL.search(n) or kd_score(n) > 0.3 or len(n) > 40)
+        return bad >= 0.3 * len(names)
+
+    def good_donor(r2):
+        return r2.get("source") != "ocr" and r2.get("status") == "OK" and not bad_names(r2)
+
     for (e, ac), r in chosen.items():
-        if e != "LS2024" or r.get("source") != "ocr" or r.get("status") != "OK":
+        if e != "LS2024" or r.get("status") != "OK":
+            continue
+        if r.get("source") != "ocr" and not bad_names(r):
             continue
         n = len(r["candidates"])
         sv = shares(r)
@@ -249,7 +268,7 @@ def borrow_ls_names(chosen):
         for d in range(1, 8):
             for a2 in (ac - d, ac + d):
                 r2 = chosen.get((e, a2))
-                if not r2 or r2.get("source") == "ocr" or r2.get("status") != "OK" or len(r2["candidates"]) != n:
+                if not r2 or not good_donor(r2) or len(r2["candidates"]) != n:
                     continue
                 s2 = shares(r2)
                 if sv.std() == 0 or s2.std() == 0:
@@ -320,6 +339,15 @@ def main():
         cands = r["candidates"]
         for c in cands:
             c["name"] = clean_cand_name(c["name"]) or ("NOTA" if c.get("is_nota") else "")
+            if not c.get("is_nota"):
+                if JUNK_NAME.match(c["name"]) or HDR_JUNK.match(c["name"]) or VOTE_KW.search(c["name"]):
+                    c["name"] = ""
+                if not (c.get("party") or "").strip() and c["name"]:
+                    nm, pty = split_name_party(c["name"])
+                    if pty:
+                        c["name"], c["party"] = nm, pty
+                elif c.get("party") and (HDR_JUNK.match(c["party"]) or BAD_PARTY.match(c["party"])):
+                    c["party"] = ""
             pty = (c.get("party") or "").strip()
             if len(pty) > 3 and not c.get("is_nota"):
                 k = c["name"].lower().find(pty.lower()[:10])

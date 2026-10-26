@@ -136,8 +136,12 @@ def rotation_scores(img):
     crop = cv2.resize(crop, None, fx=0.6, fy=0.6)
     out = {}
     for r in (0, 180, 90, 270):
-        d = pytesseract.image_to_data(rotate_img(crop, r), lang="eng", config="--psm 6 --oem 1",
-                                      output_type=pytesseract.Output.DICT)
+        try:
+            d = pytesseract.image_to_data(rotate_img(crop, r), lang="eng", config="--psm 6 --oem 1",
+                                          output_type=pytesseract.Output.DICT)
+        except pytesseract.TesseractError:
+            out[r] = 0
+            continue
         out[r] = sum(float(c) for t, c in zip(d["text"], d["conf"])
                      if t and t.strip().isdigit() and float(c) > 60)
     return out
@@ -167,14 +171,14 @@ def page_quality(pg):
         n += 1
         c = [_int(r["cells"].get(i, "") or "x") for i in range(len(pg["columns"]))]
         hit = False
-        for start in (1, 2):
+        for start in range(1, 7):
             for j in range(start + 2, len(c)):
                 if c[j] is None:
                     continue
                 head = c[start:j]
                 if None in head:
                     continue
-                if sum(head) == c[j] or (len(head) > 2 and sum(head[:-1]) == c[j]):
+                if c[j] >= 20 and len(head) >= 3 and (sum(head) == c[j] or sum(head[:-1]) == c[j]):
                     hit = True
                     break
             if hit:
@@ -284,3 +288,39 @@ def reocr_cell(ctx, band, ci):
         if _int(txt) is not None:
             return txt
     return None
+
+
+def band_words(prep):
+    """OCR every row band across the full table width (no vertical rules
+    needed); returns positioned words for pdf_table.parse_page."""
+    import pytesseract
+    img, ys, xs, info = prep
+    if len(ys) < 6:
+        return []
+    clean = clean_lines(img)
+    x0, x1 = info.get("ext") or (0, img.shape[1])
+    heights = sorted(b - a for a, b in zip(ys, ys[1:]) if b - a >= 12)
+    rh = heights[len(heights) // 3] if heights else 0
+    words = []
+    for a, b in zip(ys, ys[1:]):
+        if b - a < 12 or b - a > 2.2 * rh:
+            continue
+        strip = clean[a + 2:b - 1, max(0, x0):x1]
+        if strip.size == 0:
+            continue
+        sc = 2.0
+        im = cv2.resize(strip, None, fx=sc, fy=sc, interpolation=cv2.INTER_CUBIC)
+        im = cv2.copyMakeBorder(im, 15, 15, 15, 15, cv2.BORDER_CONSTANT, value=255)
+        try:
+            d = pytesseract.image_to_data(im, lang="eng", config="--psm 6 --oem 1 -c tessedit_char_whitelist=0123456789",
+                                          output_type=pytesseract.Output.DICT)
+        except pytesseract.TesseractError:
+            continue
+        for i, t in enumerate(d["text"]):
+            t = (t or "").strip()
+            if not t or float(d["conf"][i]) < 0:
+                continue
+            L = (d["left"][i] - 15) / sc + max(0, x0)
+            T = (d["top"][i] - 15) / sc + a + 2
+            words.append((L, T, L + d["width"][i] / sc, T + d["height"][i] / sc, t, None))
+    return words

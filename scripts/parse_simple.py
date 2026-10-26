@@ -2,7 +2,7 @@
 (name, and optionally party, written in the header rows above it)."""
 import re
 
-from parse_wide import (NOTA_KW, POSTAL_KW, REJ_KW, TEND_KW, TOTAL_KW, _numbering_row,
+from parse_wide import (HDR_JUNK, NOTA_KW, POSTAL_KW, REJ_KW, TEND_KW, TOTAL_KW, _numbering_row,
                         booth_token, clean_name, is_num, to_int)
 
 PRE_KW = re.compile(
@@ -108,7 +108,7 @@ def parse_simple(sheet):
         cells = [x for x in own_hdr(c) if not is_group(x) or NOTA_KW.search(x)]
         cells = [x for x in cells if not is_num(x)]
         name = clean_name(cells[0]) if cells else ""
-        party = cells[1] if len(cells) > 1 else ""
+        party = cells[1] if len(cells) > 1 and not HDR_JUNK.match(cells[1]) else ""
         # "Name - Party" or "Name (Party)" in one cell
         if not party:
             m = re.match(r"^(.*?)\s*\((.+?)\)?\s*$", name)

@@ -28,6 +28,16 @@ def main():
         rows.append(f"| {name} | {DRIVE_FILES[e]} | {len(ok)} | {fmt(len(be))} | {fmt(c[c.election == e].total_votes.sum())} | "
                     f"{g.get('A', 0)} / {g.get('B', 0)} / {g.get('C', 0)} / {g.get('D', 0)} | {403 - len(ok)} |")
     cover = "\n".join(rows)
+    cc = pd.read_csv(f"{DATA}/UP_Form20_candidates_ac_totals.csv")
+    win = cc[(cc["rank"] == 1)]
+    tally = []
+    for e, name in NAMES.items():
+        w = win[win.election == e].party_std.fillna("?").replace("", "?").value_counts()
+        top = ", ".join(f"{k} {v}" for k, v in w.head(8).items())
+        if e == "LS2024":
+            top = "2024 ke Form-20 PDFs mein party nahi likhi hoti, isliye ye tally sambhav nahi"
+        tally.append(f"| {name} | {int(w.sum())} | {top} |")
+    tally_md = "\n".join(tally)
     notok = q[q.status != "OK"][["election", "ac_no", "ac_name", "status", "flags"]]
     notok_md = "\n".join(f"| {r.election} | {r.ac_no} | {r.ac_name if isinstance(r.ac_name, str) else ''} | {r.status} | "
                          f"{str(r.flags)[:140] if isinstance(r.flags, str) else ''} |" for r in notok.itertuples())
@@ -60,6 +70,16 @@ Total: **{fmt(nb)} polling-station rows**; inme se {fmt(match)} booths par candi
 pehchani hui systematic galti (jaise S.No. column bhi jud gaya), ya file mein total column hi nahi par
 total row se milaan theek · C = 50–90% match, ya header mein doosri AC ka naam · D = 50% se kam match, ya
 do ACs ka data hubahu ek jaisa · F = data nahi nikal paya / withheld (neeche list).
+
+## Sanity check: AC-wise jeetne wale (booth votes ke jod se)
+
+Har AC mein sabse zyada votes wala candidate (dataset ke apne jod se). Ise asli nateejon se milaya ja sakta hai
+(jaise VS2017: BJP 312, SP 47, BSP 19, ADAL 9, INC 7, SBSP 4); farq gayab/withheld ACs aur bina-party wale
+candidates (`?`) ki wajah se hai. Lok Sabha mein ye AC-segment ke "leader" hain, seat ke winner nahi.
+
+| Election | ACs | Winners by party |
+|---|---|---|
+{tally_md}
 
 ## Files (`data/`)
 
@@ -96,10 +116,20 @@ WHERE v.election='VS2022' AND c.party_std='BJP' AND b.is_postal=0;
   (har booth par +n(n+1)/2−1) – candidate votes sahi hain, flag kiya gaya hai.
 * **NOTA column gayab** (2014 ki kuch files) – total aur candidate-jod mein chhota farq.
 * **Khaali files**: Lok Sabha 2014 ki kuch files (jaise Agra AC 87–94) mein votes bhare hi nahi hain.
-* **2024 PDFs**: ~100 digital PDFs text layer se; baaki scanned/camera-photo PDFs ko OCR (tesseract) se padha gaya –
-  har row ka jod "Total valid votes" se check hota hai, fail rows ko cell-by-cell dobara padha jata hai, aur sirf
-  ek unreadable cell bachne par hi use row total se nikala jata hai (`data_note` mein likha hai). Jis AC mein 50%
-  se kam rows check pass karein, uska OCR data shamil nahi kiya gaya.
+* **2024 PDFs**: ~100 digital PDFs text layer se padhe gaye. Baaki scanned/camera-photo PDFs ke liye OCR pipeline:
+  rotation/perspective correction → table grid (ruled lines) → har column ka tesseract OCR → **self-trained digit
+  reader** (jo rows "candidate votes ka jod = Total valid" check pass karti hain, unke digits se usi document ke
+  font par kNN model banta hai aur baaki cells dobara padhe jaate hain) → fail rows ka cell-by-cell re-OCR → agar
+  sirf ek cell unreadable bache to use row total se nikala jata hai. Har aisi row `data_note` mein marked hai.
+  Jis AC mein 50% se kam rows check pass karein, uska OCR data shamil nahi kiya gaya (`OCR_UNRELIABLE`).
+  OCR wale ACs ke candidate naam/party, usi PC ke digital AC se liye gaye jahan ballot same hai (vote-share
+  correlation se pehchaan); ye quality report mein likha hai.
+* **Party**: 2024 ke Form-20 PDFs mein sirf candidate ka naam hota hai, party nahi – isliye LS2024 mein `party`
+  zyadatar khaali hai (bahar ke kisi source se andaaze se nahi bhari gayi). Purane saalon mein jahan party column
+  khaali/galat tha, wahan naam ke saath likhi party alag ki gayi; phir bhi kuch candidates bina party ke hain (`?`).
+* **Bye-elections**: Drive ki files Form-21E / result summary hain (booth-wise nahi). 24 text PDFs parse hue; 6
+  scanned sheets ko image dekh kar manually transcribe kiya gaya aur har ek ka jod sheet ke "Total valid votes"
+  se exact milaya gaya (`method` column).
 * Drive par Lok Sabha 2014 ki 112 ACs, Vidhan Sabha 2017 ki 19 ACs aur Lok Sabha 2024 ki ~120 ACs ki files hi nahi hain.
 
 ## Jo ACs dataset mein nahi hain / data withheld

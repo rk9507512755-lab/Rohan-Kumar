@@ -7,6 +7,8 @@ data row name the columns.
 import re
 from statistics import median
 
+from krutidev import kd2uni
+from parse_wide import _numbering_row
 from parse_wide import NOTA_KW, POSTAL_KW, REJ_KW, TEND_KW, TOTAL_KW, booth_token, clean_name
 
 VALID_KW = re.compile(r"valid|विधिमान|वैध|वैद्य", re.I)
@@ -47,7 +49,7 @@ def cluster_x(xs, gap):
     return groups
 
 
-GROUP_HDR = re.compile(r"favou?r|पक्ष|^cast$|डाले|गये", re.I)
+GROUP_HDR = re.compile(r"favou?r|पक्ष|^cast$|डाले|गये|दिये|निम्नलिखित|अभ्यर्थियों|निर्वाचकों|संख्या|विधानसभा|निर्वाचन|क्षेत्र", re.I)
 
 
 def drop_footer(words):
@@ -74,6 +76,7 @@ def words_from_fitz(page):
         for line in b.get("lines", []):
             for span in line["spans"]:
                 size = span["size"]
+                kruti = bool(re.search(r"kruti|devlys", span.get("font", ""), re.I))
                 cur, box, chars = "", None, []
                 last_x1 = None
                 for ch in span["chars"]:
@@ -82,7 +85,7 @@ def words_from_fitz(page):
                     gap = (x0 - last_x1) if last_x1 is not None else 0
                     if c.isspace() or (cur and gap > 0.3 * size):
                         if cur:
-                            out.append((*box, cur, chars))
+                            out.append((*box, kd2uni(cur) if kruti else cur, chars))
                         cur, box, chars = "", None, []
                         if c.isspace():
                             last_x1 = x1
@@ -92,7 +95,18 @@ def words_from_fitz(page):
                     box = [x0, y0, x1, y1] if box is None else [min(box[0], x0), min(box[1], y0), max(box[2], x1), max(box[3], y1)]
                     last_x1 = x1
                 if cur:
-                    out.append((*box, cur, chars))
+                    out.append((*box, kd2uni(cur) if kruti else cur, chars))
+    # Kruti Dev text under an unrecognisable (subset) font name
+    from loader import kd_score
+    alpha = [w for w in out if sum(ch.isascii() and ch.isalpha() for ch in w[4]) >= 3]
+    if alpha and sum(1 for w in alpha if kd_score(w[4]) >= 0.3) >= max(5, 0.3 * len(alpha)):
+        keep_en = re.compile(r"^(page|of|form|nota|total|no\.?|serial|votes?|valid|rejected|tendered|polling|station)$", re.I)
+
+        def conv(t):
+            if keep_en.match(t) or t.upper() == t or not re.search(r"[a-z]", t):
+                return t
+            return kd2uni(t)
+        out = [(*w[:4], conv(w[4]), w[5]) for w in out]
     return out
 
 
@@ -237,6 +251,26 @@ def classify(cols):
     return kinds, post_start
 
 
+def header_rate(use, kinds, first_cand, post_start, ncols):
+    """Share of data rows where the header-derived candidate columns add up to
+    the header-derived 'total valid' column (with or without a NOTA column)."""
+    tv = kinds.index("total_valid")
+    cand = [i for i in range(first_cand, post_start) if not kinds[i]]
+    ok = n = 0
+    for p in use:
+        for r in p["rows"]:
+            if not r["is_data"]:
+                continue
+            n += 1
+            c = [_int(r["cells"].get(i, "") or "x") for i in range(ncols)]
+            vals = [c[i] for i in cand]
+            if c[tv] is None or None in vals:
+                continue
+            if sum(vals) == c[tv] or (len(vals) > 2 and sum(vals[:-1]) == c[tv]):
+                ok += 1
+    return ok / n if n else 0.0
+
+
 def infer_by_arithmetic(use, ncols, first_cand):
     """Find the 'total valid' / 'total' columns from row arithmetic when the
     header could not be read. Returns (kinds, nota_inside_col) or None."""
@@ -259,22 +293,28 @@ def infer_by_arithmetic(use, ncols, first_cand):
             ok += bool(v)
         return ok / max(1, len(rows))
 
-    best = (0, None, False)
-    for j in range(first_cand + 2, ncols):
-        a = frac(lambda c: sum(c[first_cand:j]) == c[j])
-        b = frac(lambda c: sum(c[first_cand:j - 1]) == c[j]) if j - 1 > first_cand + 1 else 0
-        if a > best[0]:
-            best = (a, j, False)
-        if b > best[0]:
-            best = (b, j, True)
-    score, j, nota_inside = best
+    best = (0, None, False, first_cand)
+    for start in range(first_cand, min(first_cand + 5, ncols - 3)):
+        for j in range(start + 2, ncols):
+            if j - start < 3:
+                continue
+            a = frac(lambda c: c[j] >= 20 and sum(c[start:j]) == c[j])
+            b = frac(lambda c: c[j] >= 20 and sum(c[start:j - 1]) == c[j]) if j - 1 > start + 1 else 0
+            if a > best[0] + 1e-9:
+                best = (a, j, False, start)
+            if b > best[0] + 1e-9:
+                best = (b, j, True, start)
+    score, j, nota_inside, start = best
     if j is None or score < 0.35:
         return None
+    best_score = score
     kinds = [""] * ncols
     kinds[0] = "serial"
     if first_cand == 2:
         kinds[1] = "ps"
     kinds[j] = "total_valid"
+    for k in range(first_cand, start):
+        kinds[k] = "pre_extra"
     tot = None
     for k in range(j + 1, ncols):
         if frac(lambda c: c[j] + sum(c[j + 1:k]) == c[k]) >= 0.35:
@@ -302,7 +342,7 @@ def infer_by_arithmetic(use, ncols, first_cand):
     else:
         for k in range(j + 1, ncols):
             kinds[k] = "rejected" if k == j + 1 else "tendered"
-    return kinds, (j - 1 if nota_inside else None)
+    return kinds, (j - 1 if nota_inside else None), best_score
 
 
 def table_from_pages(pages):
@@ -324,26 +364,36 @@ def table_from_pages(pages):
         hdrs.append(max(hs, key=len) if hs else "")
     cols = [dict(header=h) for h in hdrs]
     kinds, post_start = classify(cols)
-    # PS-number column: col 1 if it is not already classified and looks like serial
+    # booth-number column: among the first columns, the one stepping +1 most often
+    # (round / table-number columns repeat or cycle)
     first_cand = 1
-    vals0, vals1 = [], []
-    for p in use:
-        for r in p["rows"]:
-            if r["is_data"]:
-                vals0.append(_int(r["cells"].get(0, "") or "x"))
-                vals1.append(r["cells"].get(1, ""))
-    b1 = [booth_token(v) for v in vals1]
-    mono = sum(1 for a, b in zip(b1, b1[1:]) if a and b and b[0] >= a[0])
-    if sum(1 for b in b1 if b) >= 0.8 * len(b1) and mono >= 0.8 * max(1, len(b1) - 1) and kinds[1] == "":
-        kinds[1] = "ps"
-        first_cand = 2
+    ps_col = 0
+    best_steps = -1
+    for ci in range(0, min(4, ncols - 3)):
+        seq = [booth_token(r["cells"].get(ci, "") or "") for p in use for r in p["rows"] if r["is_data"]]
+        steps = sum(1 for a, b in zip(seq, seq[1:]) if a and b and b[0] - a[0] in (0, 1) and b != a)
+        if steps > best_steps + 2:
+            ps_col, best_steps = ci, steps
+    if ps_col > 0:
+        for ci in range(0, ps_col):
+            kinds[ci] = "pre_extra"
+        kinds[ps_col] = "ps"
+        first_cand = ps_col + 1
+    else:
+        vals1 = [r["cells"].get(1, "") for p in use for r in p["rows"] if r["is_data"]]
+        b1 = [booth_token(v) for v in vals1]
+        mono = sum(1 for a, b in zip(b1, b1[1:]) if a and b and b[0] >= a[0])
+        if sum(1 for b in b1 if b) >= 0.8 * len(b1) and mono >= 0.8 * max(1, len(b1) - 1) and kinds[1] == "":
+            kinds[1] = "ps"
+            first_cand = 2
     nota_inside = None
-    if "total_valid" not in kinds:
+    hdr_rate = header_rate(use, kinds, first_cand, post_start, ncols) if "total_valid" in kinds else 0.0
+    if hdr_rate < 0.5:
         inf = infer_by_arithmetic(use, ncols, first_cand)
-        if inf:
-            kinds, nota_inside = inf
+        if inf and inf[2] > hdr_rate:
+            kinds, nota_inside, _ = inf
             post_start = kinds.index("total_valid")
-            warn.append("column roles inferred from row arithmetic (header unreadable)")
+            warn.append("column roles inferred from row arithmetic (header unreadable or inconsistent)")
     cand_idx = [i for i in range(first_cand, post_start) if not kinds[i]]
     cands = []
     for i in cand_idx:
@@ -361,8 +411,10 @@ def table_from_pages(pages):
             votes = [_int(cells[c["col"]]) if c["col"] in cells else None for c in cands]
             nnum = sum(1 for v in votes if v is not None)
             label = r["label"]
+            if r["is_data"] and _numbering_row([cells.get(i, "") for i in range(ncols)]):
+                continue
             if r["is_data"]:
-                ps = cells.get(1) if first_cand == 2 else cells.get(0)
+                ps = cells.get(ps_col) if ps_col > 0 else (cells.get(1) if first_cand == 2 else cells.get(0))
                 tok = booth_token(ps or "")
                 if not tok:
                     continue

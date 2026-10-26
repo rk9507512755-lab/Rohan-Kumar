@@ -43,14 +43,14 @@ def cell_glyphs(clean, band, col):
 
 
 def row_ok(vals):
-    for start in (1, 2):
+    for start in range(1, 7):
         for j in range(start + 2, len(vals)):
             if vals[j] is None:
                 continue
             head = vals[start:j]
             if None in head:
                 continue
-            if sum(head) == vals[j] or (len(head) > 2 and sum(head[:-1]) == vals[j]):
+            if vals[j] >= 20 and len(head) >= 3 and (sum(head) == vals[j] or sum(head[:-1]) == vals[j]):
                 return True
     return False
 

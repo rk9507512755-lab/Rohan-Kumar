@@ -17,7 +17,7 @@ from collections import Counter  # noqa: E402
 
 from glyph_knn import knn_refine  # noqa: E402
 from ocr import render  # noqa: E402
-from pdf_ocr import first_col_score, ocr_grid_page, page_quality, prepare_page, reocr_cell, rotation_scores  # noqa: E402
+from pdf_ocr import band_words, first_col_score, ocr_grid_page, page_quality, prepare_page, reocr_cell, rotation_scores  # noqa: E402
 from pdf_table import _int, table_from_pages  # noqa: E402
 
 DIR = "raw/06_Lok_Sabha_2024"
@@ -154,6 +154,27 @@ def run(fname):
             rate = sum(v) / len(v) if v else 0.0
             for b in res["booths"]:
                 b.pop("_src", None)
+            rec["raw_pages"] = [[{"cells": {str(k): v for k, v in r["cells"].items()}, "is_data": r["is_data"],
+                                  "knn": bool(r.get("knn"))}
+                                 for r in p["rows"]] + [{"headers": [c["header"] for c in p["columns"]]}]
+                                if p else None for p in pages]
+            if rate < 0.5:
+                # fallback: OCR whole row bands and cluster columns by word position
+                from pdf_table import parse_page
+                bpages = [parse_page(band_words(prep), min_numeric=5) for prep in prepared]
+                res2 = table_from_pages(bpages)
+                if res2:
+                    v2 = [booth_check(b, res2["candidates"]) for b in res2["booths"]]
+                    v2 = [x for x in v2 if x is not None]
+                    rate2 = sum(v2) / len(v2) if v2 else 0.0
+                    if rate2 > rate:
+                        res, rate = res2, rate2
+                        rec["notes"].append("OCR: rows read as whole bands (column rules not detectable)")
+                        for b in res["booths"]:
+                            b.pop("_src", None)
+                        rec["raw_pages"] = [[{"cells": {str(k): v for k, v in r["cells"].items()}, "is_data": r["is_data"]}
+                                             for r in p["rows"]] + [{"headers": [c["header"] for c in p["columns"]]}]
+                                            if p else None for p in bpages]
             rec.update(status="OK", check_rate=round(rate, 3), layout="pdf-ocr", sheet="", header="",
                        candidates=[{k: x for k, x in c.items() if k != "col"} for c in res["candidates"]],
                        booths=res["booths"], totals=res["totals"],

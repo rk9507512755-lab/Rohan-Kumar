@@ -11,7 +11,7 @@ NOTA_KW = re.compile(r"\bnota\b|none ?of ?the|उपरोक्त|नोटा
 REJ_KW = re.compile(r"reject|निरस्त|अस्वीकृत|invalid", re.I)
 TEND_KW = re.compile(r"\btender|निविदत्त|टेण्डर|टेंडर", re.I)
 POSTAL_KW = re.compile(r"postal|डाक|पोस्टल|etpb", re.I)
-HDR_JUNK = re.compile(r"^(s\.? ?no\.?|sl\.? ?no\.?|si\.? ?no\.?|क्र.*|party.*|पार्टी.*|दल.*|votes.*|voters? secured|name.*)$", re.I)
+HDR_JUNK = re.compile(r"^\W*(s\.?\s*n[o0]?\.?|so\.?\s*no\.?|sl\.?\s*n[o0]\.?|si\.?\s*no\.?|sr\.?\s*no\.?|srno|serial\b.*|क्र[0०.]?\s*सं.*|क्रम\b.*|party\b.*|पार्टि\s.*|पार्टी\s.*|दल\b.*|votes?\b.*|voters?\s+sec.*|name\b.*|.*\baffil.*|.*फीलि.*|.*संबद्ध.*|प्राप्त\s.*|मत\s.*|मत)\W*(\s*[-.:]?\s*\d+\.?)?\W*$", re.I)
 
 NUM_RE = re.compile(r"^-?\d+(\.0+)?$")
 BOOTH_RE = re.compile(r"^(\d{1,4})(?:\.0)?\s*[-/ ]?\s*([A-Za-zऀ-ॿ]{1,3}\d?|\(\w{1,3}\)|/\d{1,2})?$")
