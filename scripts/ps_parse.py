@@ -23,7 +23,25 @@ ENGLISH = re.compile(r"\b(school|primary|junior|inter|college|room|govt|governme
                      r"men|women|only|polling|station|vidyalaya|madhyamik|the|of|and|road|nagar|km|yes|no|sq)\b", re.I)
 
 
+# glyphs of Devanagari fonts whose PDF text maps conjuncts / half-forms to Latin code points
+GLYPHS = {"Ĥ": "प्र", "Ů": "प्र", "ÿ": "प्र", "¢": "क्ष", "Ɨ": "क्ष", "±": "क्ष", "ɮ": "द्", "Ȩ": "द्य", "ȣ": "ी",
+          "Û": "न्", "ġ": "द्र", "è": "स्", "Þ": "ब्", "É": "ख्", "à": "म्", "Ö": "ण्", "ˋ": "स्क", "Ǆ": "त्",
+          "ȯ": "ध्य", "\u200d": ""}
+PRE_I = "ͪͧ"  # pre-base i-matra glyphs, written before their consonant
+
+
+def fix_glyphs(s):
+    if not s or not re.search("[\u0080-\u02FF\u0300-\u036F\u200d]", s):
+        return s
+    s = re.sub(rf"[{PRE_I}]\s*([{CONS}](?:\u094D[{CONS}])*)", r"\1" + "\u093F", s)
+    s = re.sub(rf"[{PRE_I}]", "", s)
+    for a, b in GLYPHS.items():
+        s = s.replace(a, b)
+    return s
+
+
 def fix_uni(s):
+    s = fix_glyphs(s)
     # pre-base i-matra written before its consonant (visual order) -> logical order
     s = re.sub(rf"ि([{CONS}](?:्[{CONS}])*)", r"\1" + "ि", s)
     # reph glyphs left after the consonant: ª / ê  -> र् before that consonant

@@ -17,6 +17,7 @@ import pandas as pd
 
 sys.path.insert(0, os.path.dirname(__file__))
 from skeleton import skeletons  # noqa: E402
+from ps_parse import fix_glyphs  # noqa: E402
 
 REPO = sys.argv[1] if len(sys.argv) > 1 else "/home/user/rohan-kumar"
 OUTDIR = f"{REPO}/data/polling_stations"
@@ -77,7 +78,7 @@ def guess_ac_by_names(rows, cand_acs, names):
     if not cand:
         return None, {}
     df = Counter(t for a in cand for t in names[a])
-    toks = {t for r in rows for t in tokens(f"{r.get('location', '')} {r.get('building', '')}")}
+    toks = {t for r in rows for t in tokens(fix_glyphs(f"{r.get('location', '')} {r.get('building', '')}"))}
     idf = {t: math.log((len(cand) + 1) / df[t]) for t in toks if df.get(t)}
     total = sum(math.log(len(cand) + 1) for _ in toks) or 1
     scores = {a: sum(w for t, w in idf.items() if t in names[a]) / total for a in cand}
@@ -120,6 +121,8 @@ def main():
         files.append(r)
     by_ac = defaultdict(list)
     for r in files:
+        if r["status"] == "OK" and (len(r["rows"]) > 1300 or max(x["ps_no"] for x in r["rows"]) > 1300):
+            r["status"] = "NOT_ONE_AC"  # district-wide serial numbers, not an AC list
         if r["ac"] and r["status"] == "OK":
             by_ac[r["ac"]].append(r)
     out_rows, report = [], []
@@ -150,8 +153,8 @@ def main():
         for x in rows:
             src = x.pop("_src")
             out_rows.append(dict(district=ac_dist[ac], ac_no=ac, ac_name=ac_name[ac], ps_no=x["ps_no"],
-                                 ps_no_inferred=bool(x.get("ps_no_inferred")), location=x.get("location", ""),
-                                 building=x.get("building", ""), area=x.get("area", ""),
+                                 ps_no_inferred=bool(x.get("ps_no_inferred")), location=fix_glyphs(x.get("location", "")),
+                                 building=fix_glyphs(x.get("building", "")), area=fix_glyphs(x.get("area", "")),
                                  voters_for=x.get("voters_for", ""), electors=x.get("electors"),
                                  tehsil_block_zone=x.get("group") or "", list_title=src["page_title"].split("|")[0].strip(),
                                  list_upload=f"{src['page_ym'] // 100}-{src['page_ym'] % 100:02d}",
