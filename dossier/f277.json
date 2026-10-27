@@ -1,0 +1,180 @@
+{
+ "ac_name_en": "Katehari",
+ "ac_name_hi": "कटेहरी",
+ "district_en": "Ambedkar Nagar",
+ "district_hi": "अम्बेडकर नगर",
+ "pc": "Ambedkar Nagar Lok Sabha",
+ "category": "General / सामान्य",
+ "updated": "27 Oct 2026",
+ "nda_2022_party": "NISHAD",
+ "current": {
+  "MLA (since Nov 2024) / विधायक": [
+   "Dharmraj Nishad (BJP), won the 2024 bye-election",
+   "धर्मराज निषाद (भाजपा), 2024 उपचुनाव में जीते"
+  ],
+  "MP (since Jun 2024) / सांसद": [
+   "Lalji Verma (SP), Ambedkar Nagar",
+   "लालजी वर्मा (सपा), अम्बेडकर नगर"
+  ],
+  "Tehsil on 2026 list / तहसील": [
+   "Bhiti (list signed by SDM Bhiti)",
+   "भीटी"
+  ],
+  "Lok Sabha segments / लोकसभा के क्षेत्र": [
+   "Goshainganj, Katehari, Tanda, Jalalpur, Akbarpur",
+   "गोसाईगंज, कटेहरी, टांडा, जलालपुर, अकबरपुर"
+  ]
+ },
+ "bye2024": {
+  "winner_party": "BJP",
+  "winner_votes": 104091,
+  "runner_party": "SP",
+  "runner_votes": 69577,
+  "margin": 34514,
+  "margin_pct": 15.11,
+  "turnout": null,
+  "candidates": [
+   {
+    "p": "BJP",
+    "v": 104091,
+    "s": 45.57,
+    "c": "Dharmraj Nishad"
+   },
+   {
+    "p": "SP",
+    "v": 69577,
+    "s": 30.46,
+    "c": "Shobhawati Verma"
+   },
+   {
+    "p": "BSP",
+    "v": 41647,
+    "s": 18.23,
+    "c": "Amit Verma"
+   },
+   {
+    "p": "ASP(KR)",
+    "v": 5152,
+    "s": 2.26,
+    "c": "Rajesh Kumar"
+   },
+   {
+    "p": "IND",
+    "v": 1650,
+    "s": 0.72,
+    "c": "Govind Kumar"
+   },
+   {
+    "p": "NOTA",
+    "v": 1530,
+    "s": 0.67,
+    "c": "NOTA"
+   }
+  ]
+ },
+ "issues": [
+  {
+   "en": "Roads: 92 roads of Katehari were put in the district plan to repair broken roads (Jan 2025).",
+   "hi": "सड़कें: ज़िले की टूटी सड़कों की मरम्मत योजना में कटेहरी की 92 सड़कें शामिल की गईं (जनवरी 2025)।",
+   "when": "Jan 2025"
+  },
+  {
+   "en": "Voter list revision (SIR): in Dec 2025 about 2.5 lakh enumeration forms were still pending across the district.",
+   "hi": "मतदाता सूची पुनरीक्षण (SIR): दिसंबर 2025 में ज़िले में करीब 2.5 लाख गणना फ़ॉर्म बाकी थे।",
+   "when": "Dec 2025"
+  },
+  {
+   "en": "The district published a list of Katehari voters flagged for 'no mapping / logical discrepancy' during SIR.",
+   "hi": "ज़िले ने SIR के दौरान 'मैपिंग नहीं / तार्किक गड़बड़ी' वाले कटेहरी के मतदाताओं की सूची जारी की।",
+   "when": "2026"
+  },
+  {
+   "en": "Ghaghra erosion: an anti-erosion scheme was sanctioned for Ambedkar Nagar district (not specific to Katehari).",
+   "hi": "घाघरा कटान: अम्बेडकर नगर ज़िले के लिए कटान-रोधी योजना मंज़ूर (सिर्फ़ कटेहरी के लिए नहीं)।",
+   "when": "undated"
+  }
+ ],
+ "plan": [
+  [
+   "Days 1–30: match booth workers to the 2026 polling-station list; help eligible people file Form 6/7/8 in the claims period; name a booth committee.",
+   "दिन 1–30: बूथ कार्यकर्ताओं को 2026 की मतदेय स्थल सूची से मिलाएँ; दावा-आपत्ति के समय पात्र लोगों के फ़ॉर्म 6/7/8 भरवाने में मदद; बूथ समिति तय करें।",
+   "1–30"
+  ],
+  [
+   "Days 31–60: committees in all 474 booths, swing-lead and can-be-flipped booths first; listening meetings tola by tola; women's meetings.",
+   "दिन 31–60: सभी 474 बूथों पर समिति, पहले स्विंग बढ़त और पलटने लायक बूथ; टोला-टोला बात सुनने की बैठकें; महिला बैठकें।",
+   "31–60"
+  ],
+  [
+   "Days 61–90: door-to-door contact; one issue note per village; train polling agents (mock poll, Form 17C).",
+   "दिन 61–90: घर-घर संपर्क; हर गाँव का मुद्दा-नोट; पोलिंग एजेंट प्रशिक्षण (मॉक पोल, फ़ॉर्म 17C)।",
+   "61–90"
+  ],
+  [
+   "Days 91–120: follow the model code of conduct; take permission for every meeting; an agent in every booth, two in the 15 closest booths; no vehicles, money or gifts for voters; label any AI-made video.",
+   "दिन 91–120: आचार संहिता का पालन; हर सभा की अनुमति; हर बूथ पर एजेंट, 15 सबसे कड़े बूथों पर दो; वोटर को वाहन, पैसा या उपहार नहीं; AI से बने वीडियो पर साफ़ लेबल।",
+   "91–120"
+  ]
+ ],
+ "takeaways": [
+  [
+   "The seat changes hands: SP 2012, BSP 2017, SP 2022, BJP in the 2024 bye-election.",
+   "सीट हर बार बदलती है: 2012 सपा, 2017 बसपा, 2022 सपा, 2024 उपचुनाव भाजपा।"
+  ],
+  [
+   "Assembly margins were thin: 2.7% in 2017 and 3.0% in 2022; the 2024 bye-election margin was 15.1%.",
+   "विधानसभा में अंतर बहुत कम रहा: 2017 में 2.7%, 2022 में 3.0%; 2024 उपचुनाव में 15.1%।"
+  ],
+  [
+   "It is a three-way seat: BSP had 23.8% in 2022, 17.7% in the 2024 Lok Sabha and 18.2% in the bye-election.",
+   "यह तीन-तरफ़ा सीट है: बसपा को 2022 में 23.8%, 2024 लोकसभा में 17.7% और उपचुनाव में 18.2% वोट मिले।"
+  ],
+  [
+   "The middle bands decide it: each big party had 110–144 booths it lost by under 100 votes in 2022.",
+   "फ़ैसला बीच के खानों में होता है: 2022 में हर बड़ी पार्टी 110–144 बूथ 100 से कम वोट से हारी।"
+  ],
+  [
+   "The roll has changed: the 2026 draft list has 3,64,894 voters in 474 polling stations, 28,996 fewer voters than 2022.",
+   "सूची बदल गई है: 2026 की आलेख्य सूची में 474 मतदेय स्थलों पर 3,64,894 मतदाता, 2022 से 28,996 कम।"
+  ],
+  [
+   "Women matter: more women than men voted in 332 of 464 booths in 2022.",
+   "महिलाएँ अहम हैं: 2022 में 464 में से 332 बूथों पर पुरुषों से ज़्यादा महिलाओं ने वोट डाला।"
+  ]
+ ],
+ "errors": [
+  "Form-20 booth totals exclude postal ballots. Official 2022: Lalji Verma 93,524, Avadhesh Kumar 85,828, Prateek Pandey 58,482 (margin 7,696); booth sums here: 92,808 / 85,548 / 58,186 (margin 7,260). 2017 official winner 84,358 vs 84,049 here. All booth-level numbers in this dossier are EVM votes only.",
+  "VS2017 and VS2022: 'voters' (people who voted) exceed counted votes by 2,235 (2017) and 1,486 (2022) — likely rejected/test votes; not explained in the file.",
+  "LS files: the booth 'candidate_votes_total' column already includes NOTA; in the VS files it does not. The cross-checks handle both.",
+  "LS2024 Form-20 has no party, booth names, electors or turnout. Parties for Lalji Verma (SP), Ritesh Pandey (BJP) and Qamar Hayat (BSP) were added by name; small candidates remain '?'. 2024 turnout and women's share cannot be shown.",
+  "LS2014 candidate names include the party name in the name field (e.g. 'Hari Om Pandey Bharatiya Janata Party').",
+  "LS2019: one independent candidate's name is garbled (English text wrongly read as Kruti Dev): 'ज्ंपहंत त्ंउदपीवत …'.",
+  "VS2012 names are in brackets in the file, e.g. '(SHANKHALAL MANJHI)'; brackets removed here.",
+  "VS2017: NISHAD party is written 'NINSHAD' in the file; treated as NISHAD.",
+  "Booths were renumbered every election: 359 (2012), 384 (2017), 449 (LS2019), 464 (2022), 425 (LS2024), 474 (2026 draft). VS2022 booth names are in English with typos (PARIMARY, FIST, COLEEGE); only 275 of 464 booths could be traced to 2017 and 346 to the 2026 list. Core/swing and village figures are therefore on traced booths only.",
+  "2026 list: the 'area' column of this AC holds the separate-gate answer, not the area; one polling station has no 'for all/men/women' entry; no tehsil/block per booth.",
+  "Electors: 2026 draft list sum 3,64,894; Wikipedia infobox 3,94,267 (undated); district site says 425 polling stations (old, undated).",
+  "Lowest 2022 turnout: booths 81 (15.7%) and 80 (27.8%) at Tanda Taapeey Inter College, Vidyut Nagar — verify on ground before using.",
+  "Bye-election 2024 turnout percentage not found; only votes cast (2,28,434)."
+ ],
+ "sources": [
+  "https://en.wikipedia.org/wiki/Katehari_Assembly_constituency",
+  "https://results.eci.gov.in/ResultAcByeNov2024/candidateswise-S24277.htm",
+  "https://theprint.in/india/up-bypolls-bjps-dharmraj-nishad-wins-katehari-seat-defeats-sps-shobhawati-varma/2370812/",
+  "https://en.wikipedia.org/wiki/Ambedkar_Nagar_Lok_Sabha_constituency",
+  "https://en.wikipedia.org/wiki/Lalji_Verma",
+  "https://en.wikipedia.org/wiki/Dharmraj_Nishad",
+  "https://en.wikipedia.org/wiki/Ritesh_Pandey",
+  "https://www.deccanherald.com/india/uttar-pradesh/nishad-wants-victory-and-not-seats-says-party-chief-dr-sanjay-nishad-3248771",
+  "https://ambedkarnagar.nic.in/subdivision-blocks/",
+  "https://cdn.s3waas.gov.in/s3bd686fd640be98efaae0091fa301e613/uploads/2026/07/17839259847705.pdf",
+  "https://www.amarujala.com/uttar-pradesh/ambedkar-nagar/378-dilapidated-roads-will-be-improved-traffic-will-become-smooth-ambedkar-nagar-news-c-91-1-abn1002-127199-2025-01-03",
+  "https://www.amarujala.com/uttar-pradesh/ambedkar-nagar/25-lakh-counting-forms-yet-to-be-filled-voters-upset-ambedkar-nagar-news-c-91-1-brp1007-146578-2025-12-06",
+  "https://ambedkarnagar.nic.in/logical-discrepancies-2026/",
+  "https://eparlib.nic.in/bitstream/123456789/515784/1/16564.pdf"
+ ],
+ "official_margin": {
+  "VS2017": 6287,
+  "VS2022": 7696
+ }
+}
