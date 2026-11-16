@@ -171,7 +171,7 @@ export default async function HomePage() {
       </section>
 
       {/* 8 — REWAAS Gift Studio */}
-      <section className="relative overflow-hidden bg-wine text-ivory">
+      <section className="relative overflow-hidden bg-wine-700 text-ivory">
         <div className="container-site grid gap-12 py-20 lg:grid-cols-12 lg:py-28">
           <div className="lg:col-span-5">
             <p className="text-[11px] uppercase tracking-[0.32em] text-gold-300">REWAAS Gift Studio</p>
@@ -189,9 +189,9 @@ export default async function HomePage() {
           </div>
           <div className="grid grid-cols-2 content-center gap-3 sm:grid-cols-4 lg:col-span-7">
             {GIFTING.map((g) => (
-              <Link key={g.label} href={g.href} className="group relative block aspect-[4/5] overflow-hidden bg-wine-700">
+              <Link key={g.label} href={g.href} className="group relative block aspect-[4/5] overflow-hidden bg-wine-800">
                 <Img src={g.image} alt={g.label} fill sizes="(min-width:1024px) 22vw, 45vw" className="img-zoom object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-wine-900/85 via-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-wine-900/80 via-transparent" />
                 <span className="absolute bottom-3 left-3 right-3 font-display text-[17px] leading-tight sm:text-lg">{g.label}</span>
               </Link>
             ))}

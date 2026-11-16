@@ -1,15 +1,16 @@
 import type { Config } from "tailwindcss";
 
-// REWAAS palette — wine, ivory, antique gold. Keep every surface inside this family.
+// REWAAS palette — sindoor coral (token "wine"), warm ivory/peach, rose-copper gold, warm ink.
+// Token names are kept stable so components never hard-code colours.
 const config: Config = {
   content: ["./src/**/*.{ts,tsx}"],
   theme: {
     extend: {
       colors: {
-        wine: { DEFAULT: "#5E1A2E", 50: "#F8EEF0", 100: "#EED6DC", 200: "#D9A9B5", 400: "#93394F", 600: "#5E1A2E", 700: "#4A1324", 800: "#360D1A", 900: "#240811" },
-        ivory: { DEFAULT: "#FBF7F1", 50: "#FFFDF9", 100: "#FBF7F1", 200: "#F4ECE0", 300: "#EADDCB" },
-        gold: { DEFAULT: "#A9824B", 300: "#D6BC8E", 400: "#C2A06A", 500: "#A9824B", 600: "#8A6735" },
-        ink: { DEFAULT: "#221B19", 400: "#6E625D", 300: "#968A84", 200: "#CFC6BF" },
+        wine: { DEFAULT: "#C4553D", 50: "#FDF1EC", 100: "#FADFD4", 200: "#F2B9A6", 400: "#D9715A", 600: "#C4553D", 700: "#A8432F", 800: "#8C3626", 900: "#4A1F17" },
+        ivory: { DEFAULT: "#FFF8F2", 50: "#FFFCF9", 100: "#FFF8F2", 200: "#FBEDE3", 300: "#F5DDCD" },
+        gold: { DEFAULT: "#C08552", 300: "#E8C39E", 400: "#D9A574", 500: "#C08552", 600: "#9F6A3D" },
+        ink: { DEFAULT: "#2B2220", 400: "#6F605A", 300: "#9A8B84", 200: "#D8CBC2" },
       },
       fontFamily: {
         display: ["'Cormorant Garamond'", "'Playfair Display'", "Georgia", "serif"],

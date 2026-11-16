@@ -30,7 +30,7 @@ function Announcements({ items }: { items: { text: string; href: string | null }
   if (!items.length) return null;
   const a = items[i];
   return (
-    <div className="bg-wine text-ivory">
+    <div className="bg-wine-700 text-ivory">
       <div className="container-site flex h-9 items-center justify-center text-center text-[11px] uppercase tracking-[0.2em]">
         <p key={i} className="animate-fadeIn truncate">
           {a.href ? <Link href={a.href} className="hover:text-gold-300">{a.text}</Link> : a.text}
