@@ -40,6 +40,9 @@ export function ActionForm({
         id={id}
         className={className}
         noValidate
+        // Progressive enhancement: before hydration the form still POSTs to the server action
+        // (never a GET that would leak fields such as passwords into the URL).
+        action={formAction}
         onSubmit={(e) => {
           e.preventDefault();
           if (confirm && !window.confirm(confirm)) return;

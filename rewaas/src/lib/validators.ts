@@ -1,6 +1,9 @@
 import { z } from "zod";
 
-export const phoneSchema = z.string().trim().regex(/^(\+?91[-\s]?)?[6-9]\d{9}$/, "Enter a valid 10-digit Indian mobile number");
+export const phoneSchema = z.preprocess(
+  (v) => (typeof v === "string" ? v.replace(/[\s\-()]/g, "") : v),
+  z.string().regex(/^(\+?91)?0?[6-9]\d{9}$/, "Enter a valid 10-digit Indian mobile number"),
+);
 export const pincodeSchema = z.string().trim().regex(/^[1-9][0-9]{5}$/, "Enter a valid 6-digit PIN code");
 export const emailSchema = z.string().trim().toLowerCase().email("Enter a valid email address");
 export const passwordSchema = z.string().min(8, "Password must be at least 8 characters").max(100);

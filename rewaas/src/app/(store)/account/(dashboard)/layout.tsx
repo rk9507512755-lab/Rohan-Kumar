@@ -13,8 +13,8 @@ export default async function AccountLayout({ children }: { children: React.Reac
         <p className="eyebrow">My Account</p>
         <p className="mt-2 font-display text-[2rem] leading-tight sm:text-[2.6rem]">Namaste, {first}</p>
       </div>
-      <div className="grid gap-8 lg:grid-cols-12 lg:gap-14">
-        <aside className="lg:col-span-3 xl:col-span-2">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-14">
+        <aside className="min-w-0 lg:col-span-3 xl:col-span-2">
           <div className="lg:sticky lg:top-28"><AccountNav /></div>
         </aside>
         <div className="min-w-0 lg:col-span-9 xl:col-span-10">{children}</div>
