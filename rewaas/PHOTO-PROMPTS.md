@@ -101,3 +101,18 @@ Hamper/accessory ke liye: **"E-commerce product photo of [product] on a plain wa
 | 63 | `p-corporate-signature-hamper.jpg` | Corporate Signature Hamper — Midnight Navy Gift hamper, Hand-packed, logo card |
 | 64 | `p-shagun-return-gift-potli-set-of-10.jpg` | Shagun Return Gift Potli (Set of 10) — Rani Pink Brocade, Hand-finished |
 
+
+## F. Gift Combos (4:5 portrait) — optional upgrade
+Abhi combo photos maujooda photos ko jod kar bani hain. Asli "boxed combo" look ke liye ye prompts use karein aur **isi naam se** `public/photos/` mein save karein (purani file replace ho jayegi).
+Template: **"Luxury Indian gift box flat-lay, open keepsake box on warm ivory linen: [contents], dried rose petals and marigolds around, soft daylight, premium e-commerce gifting photo."**
+
+| File naam | Contents (template mein daalein) |
+|---|---|
+| `combo-kanjeevaram-shagun.jpg` | neatly folded mustard Kanjeevaram silk saree with magenta temple border, kundan jhumkas in a velvet tray, wine velvet potli bag, wine-velvet trunk with brass clasp, small "Shagun" card |
+| `combo-banarasi-bridal-trousseau.jpg` | folded ruby-red Banarasi silk saree, kundan choker necklace set with maang tikka, zardozi potli, saffron barfi box, candle, wine velvet trunk |
+| `combo-organza-saree-celebration.jpg` | folded lilac embroidered organza saree, kundan drop earrings, chocolates box, jasmine candle, blush gift box with ribbon, birthday card |
+| `combo-festive-chanderi-saree.jpg` | folded mustard Chanderi saree, hand-painted diyas, brass urli, kaju katli, dry fruits, brocade potli, gold festive box |
+| `combo-anarkali-kundan.jpg` | folded emerald green embroidered Anarkali suit with dupatta, kundan necklace and jhumkas, two candles, velvet keepsake box |
+| `combo-chikankari-suit.jpg` | folded ivory chikankari suit set, mirror-work potli, rose water bottle, chocolates, blush keepsake box |
+| `combo-silk-suit-festive.jpg` | folded royal blue silk suit set, kundan earrings, brass diyas, dry fruit jar, gold-foiled box |
+| `combo-grand-trousseau.jpg` | large heritage trunk containing a folded mustard Kanjeevaram saree, a folded emerald Anarkali suit and a kundan bridal jewellery set, potli bag, personalised card |

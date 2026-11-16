@@ -13,6 +13,10 @@ export const metadata: Metadata = {
 };
 
 const OCCASIONS = [
+  { label: "Saree Gift Combos", href: "/collections/gift-combos?q=saree", image: "/photos/combo-kanjeevaram-shagun.jpg", line: "A saree, jewellery & treats, boxed" },
+  { label: "Suit Gift Combos", href: "/collections/gift-combos?q=suit", image: "/photos/combo-anarkali-kundan.jpg", line: "A suit with matching jewellery" },
+  { label: "Bridal Trousseau Boxes", href: "/collections/gift-combos?occasion=wedding", image: "/photos/combo-grand-trousseau.jpg", line: "Saree, suit & bridal jewellery" },
+  { label: "Festive Saree Combos", href: "/products/festive-chanderi-saree-combo", image: "/photos/combo-festive-chanderi-saree.jpg", line: "Saree, diyas & mithai for Diwali" },
   { label: "Bridal Gift Hampers", href: "/collections/bridal-hampers", image: "/photos/p-bride-to-be-luxe-hamper.jpg", line: "For the bride-to-be's countdown" },
   { label: "Bridesmaid Hampers", href: "/products/bridesmaid-edit-hamper", image: "/photos/p-bridesmaid-edit-hamper.jpg", line: "Thank the girls who stood by you" },
   { label: "Wedding Return Gifts", href: "/collections/wedding-return-gifts", image: "/photos/p-shagun-return-gift-potli-set-of-10.jpg", line: "Shagun potlis for every guest" },
@@ -24,7 +28,10 @@ const OCCASIONS = [
 ];
 
 export default async function GiftStudioPage() {
-  const hampers = await productsFor({ category: { parent: { slug: "gift-hampers" } } }, 8, [{ popularity: "desc" }]);
+  const [hampers, combos] = await Promise.all([
+    productsFor({ category: { parent: { slug: "gift-hampers" } }, NOT: { collections: { has: "gift-combo" } } }, 8, [{ popularity: "desc" }]),
+    productsFor({ collections: { has: "gift-combo" } }, 8, [{ isFeatured: "desc" }, { popularity: "desc" }]),
+  ]);
   return (
     <>
       <section className="relative overflow-hidden bg-ivory-200">
@@ -69,6 +76,13 @@ export default async function GiftStudioPage() {
               <li key={t} className="bg-wine-700 p-7"><span className="font-display text-4xl text-gold-300">0{i + 1}</span><p className="mt-3 font-display text-2xl">{t}</p><p className="mt-2 text-sm text-ivory/70">{d}</p></li>
             ))}
           </ol>
+        </div>
+      </section>
+
+      <section className="bg-ivory-200/70 py-20 lg:py-28">
+        <div className="container-site">
+          <SectionHeading align="left" eyebrow="Saree · Suit · Jewellery" title="Perfect Gift Combos" text="Complete looks — a saree or suit with matching jewellery and treats — boxed and ready to give." href="/collections/gift-combos" linkLabel="Shop all combos" />
+          <div className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-4 lg:gap-x-6">{combos.map((p) => <ProductCard key={p.id} p={p} />)}</div>
         </div>
       </section>
 

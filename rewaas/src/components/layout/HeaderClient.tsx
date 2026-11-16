@@ -235,7 +235,7 @@ const MEGA_IMAGES: Record<string, string[]> = {
   Lehengas: ["/photos/p-rajkumari-bridal-lehenga.jpg", "/photos/p-gulabo-festive-lehenga.jpg"],
   Kurtis: ["/photos/p-ada-chikankari-kurti.jpg", "/photos/p-sanganeri-block-print-kurti.jpg"],
   "Bridal Collection": ["/photos/p-shehzaadi-bridal-velvet-lehenga.jpg", "/photos/p-meenakshi-kanjeevaram-silk-saree.jpg"],
-  "Gift Hampers": ["/photos/p-bride-to-be-luxe-hamper.jpg", "/photos/p-diwali-diya-and-mithai-hamper.jpg"],
+  "Gift Hampers": ["/photos/combo-kanjeevaram-shagun.jpg", "/photos/p-bride-to-be-luxe-hamper.jpg"],
 };
 function megaFallback(label: string, idx: number) {
   return MEGA_IMAGES[label]?.[idx - 1] ?? "/photos/hero-1.jpg";

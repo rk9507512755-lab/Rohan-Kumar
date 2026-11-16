@@ -2,7 +2,7 @@
   "name": "rewaas",
   "version": "1.0.0",
   "private": true,
-  "description": "REWAAS — premium Indian ethnic wear, contemporary fashion and luxury gifting store",
+  "description": "REWAAS \u2014 premium Indian ethnic wear, contemporary fashion and luxury gifting store",
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",
@@ -13,7 +13,8 @@
     "db:migrate": "prisma migrate deploy",
     "db:seed": "tsx prisma/seed.ts",
     "db:reset": "prisma db push --force-reset && tsx prisma/seed.ts",
-    "images": "node scripts/generate-demo-images.mjs"
+    "images": "node scripts/generate-demo-images.mjs",
+    "db:combos": "tsx prisma/combos.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

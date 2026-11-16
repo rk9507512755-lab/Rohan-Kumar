@@ -34,13 +34,13 @@ const BRIDAL = [
 ];
 
 const GIFTING = [
+  { label: "Saree & Suit Combos", href: "/collections/gift-combos", image: "/photos/combo-kanjeevaram-shagun.jpg" },
   { label: "Bridal Gift Hampers", href: "/collections/bridal-hampers", image: "/photos/p-bride-to-be-luxe-hamper.jpg" },
   { label: "Bridesmaid Hampers", href: "/products/bridesmaid-edit-hamper", image: "/photos/p-bridesmaid-edit-hamper.jpg" },
   { label: "Wedding Return Gifts", href: "/collections/wedding-return-gifts", image: "/photos/p-shagun-return-gift-potli-set-of-10.jpg" },
   { label: "Festive Gift Hampers", href: "/collections/festive-hampers", image: "/photos/p-diwali-diya-and-mithai-hamper.jpg" },
   { label: "Birthday Hampers", href: "/products/birthday-blossom-hamper", image: "/photos/p-birthday-blossom-hamper.jpg" },
   { label: "Anniversary Gifts", href: "/products/anniversary-keepsake-hamper", image: "/photos/p-anniversary-keepsake-hamper.jpg" },
-  { label: "Corporate Gifts", href: "/collections/corporate-gifts", image: "/photos/p-corporate-signature-hamper.jpg" },
   { label: "Personalised Hampers", href: "/gift-studio/create", image: "/photos/gift-studio.jpg" },
 ];
 
@@ -61,7 +61,9 @@ export default async function HomePage() {
     productsFor({ OR: [{ category: { parent: { slug: "suits-sets" } } }, { category: { parent: { slug: "kurtis" } } }], isBestseller: true }, 4, [{ popularity: "desc" }]),
     productsFor({ category: { parent: { slug: "lehengas" } } }, 4, [{ popularity: "desc" }]),
     productsFor({ category: { parent: { slug: "gift-hampers" } } }, 4, [{ popularity: "desc" }]),
+    productsFor({ collections: { has: "gift-combo" } }, 4, [{ isFeatured: "desc" }, { popularity: "desc" }]),
   ]);
+  const combos = best[5];
   const hero = banners.filter((b) => b.placement === "hero");
   const featured = banners.find((b) => b.placement === "featured");
   const tabs = [
@@ -201,6 +203,24 @@ export default async function HomePage() {
           </Reveal>
         </div>
       </section>
+
+      {/* 8b — Perfect Gift Combos */}
+      {combos.length > 0 && (
+        <section className="bg-ivory-200/70 py-20 lg:py-28">
+          <div className="container-site">
+            <SectionHeading eyebrow="Ready to Gift" title="Perfect Gift Combos" text="A saree or suit, matching jewellery and a few indulgences — one complete look, beautifully boxed and ready to give." />
+            <Reveal className="-mt-4 mb-10 flex flex-wrap justify-center gap-2">
+              {[["Saree Combos", "/collections/gift-combos?q=saree"], ["Suit Combos", "/collections/gift-combos?q=suit"], ["Bridal Trousseau", "/collections/gift-combos?occasion=wedding"], ["Festive Gifting", "/collections/gift-combos?occasion=festive"], ["Build Your Own", "/gift-studio/create"]].map(([l, h]) => (
+                <Link key={l} href={h} className="chip px-4 py-2 text-[11px] uppercase tracking-[0.14em]">{l}</Link>
+              ))}
+            </Reveal>
+            <Reveal stagger className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-4 lg:gap-x-6">
+              {combos.map((p) => <ProductCard key={p.id} p={p} />)}
+            </Reveal>
+            <div className="mt-12 text-center"><Link href="/collections/gift-combos" className="btn-primary">Shop all gift combos</Link></div>
+          </div>
+        </section>
+      )}
 
       {/* 9 — Featured Collection */}
       {featured && (

@@ -2,6 +2,7 @@
 import { PrismaClient, type SizeChartType } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { componentArt, editorialArt, productArt, writeArt, type Silhouette } from "./art";
+import { seedCombos } from "./combos";
 import { C, CATEGORIES, HAMPER_BOXES, HAMPER_COMPONENTS, HAMPER_CARE, KURTI_CARE, PACKAGING, PRODUCTS, SAREE_CARE, SUIT_CARE } from "./catalog-data";
 
 const db = new PrismaClient();
@@ -250,6 +251,7 @@ async function main() {
     });
     orderSeq++;
   }
+  await seedCombos(db);
   await db.newsletterSubscriber.createMany({ data: ["ananya@example.com", "meera@example.com", "shreya@example.com"].map((email) => ({ email, source: "footer" })) });
 
   console.log(`\nSeed complete: ${productIds.length} products, ${orderSeq} demo orders.`);
