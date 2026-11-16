@@ -5,6 +5,7 @@ import Img from "@/components/Img";
 import OrderTimeline from "@/components/account/OrderTimeline";
 import StatusPill from "@/components/account/StatusPill";
 import { CancelOrder, ReturnRequest } from "@/components/account/OrderActions";
+import { FormAlert } from "@/components/account/fields";
 import { CheckIcon, GiftIcon } from "@/components/icons";
 import { buildTimeline, CANCELLABLE, PAYMENT_LABEL, PAYMENT_STATUS_LABEL, parseAddress, parseHamper, RETURN_STATUS_LABEL, returnWindow } from "@/components/account/order-helpers";
 import { requireUser } from "@/lib/auth";
@@ -13,7 +14,7 @@ import { inr } from "@/lib/money";
 import { STATUS_LABEL } from "@/lib/orders";
 import { fmtDate } from "@/lib/utils";
 
-type Props = { params: Promise<{ number: string }>; searchParams: Promise<{ placed?: string }> };
+type Props = { params: Promise<{ number: string }>; searchParams: Promise<{ placed?: string; cancelled?: string; requested?: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return { title: `Order ${(await params).number}`, robots: { index: false } };
@@ -21,7 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function OrderDetailPage({ params, searchParams }: Props) {
   const { number } = await params;
-  const { placed } = await searchParams;
+  const { placed, cancelled, requested } = await searchParams;
   const user = await requireUser(`/account/orders/${number}`);
   const order = await db.order.findFirst({
     where: { number, userId: user.id },
@@ -55,6 +56,17 @@ export default async function OrderDetailPage({ params, searchParams }: Props) {
             <p className="mt-1 text-sm text-ink-400">We've sent the details to {order.email}. We'll let you know the moment it ships.</p>
           </div>
         </div>
+      )}
+
+      {cancelled === "1" && order.status === "CANCELLED" && (
+        <FormAlert tone="ok">
+          Your order has been cancelled.{order.paymentStatus === "PAID" && " Your refund will be processed to the original payment method within 5–7 business days."}
+        </FormAlert>
+      )}
+      {(requested === "return" || requested === "exchange") && (
+        <FormAlert tone="ok">
+          Your {requested} request has been received. Our team will be in touch within 24–48 hours to arrange a pickup. <Link href="/account/returns" className="underline decoration-gold/60 underline-offset-4">Track it under Returns & Exchanges</Link>.
+        </FormAlert>
       )}
 
       <header className="flex flex-col gap-5 border-b border-ink-200/70 pb-6 sm:flex-row sm:items-end sm:justify-between">

@@ -219,20 +219,10 @@ export async function cancelOrderAction(_prev: FormState, fd: FormData): Promise
   if (!CANCELLABLE.includes(order.status)) return fail("This order can no longer be cancelled — it may already have shipped. Please contact client care.", undefined);
   const reason = parsed.data.details ? `${parsed.data.reason} — ${parsed.data.details}` : parsed.data.reason;
   await setOrderStatus(order.id, "CANCELLED", "Cancelled by customer");
-  await db.order.update({
-    where: { id: order.id },
-    data: {
-      cancelReason: reason,
-      // Prepaid orders get refunded by the team; reflect intent if it was paid.
-      ...(order.paymentStatus === "PENDING" && order.paymentMethod === "RAZORPAY" ? { paymentStatus: "FAILED" as const } : {}),
-    },
-  });
-  revalidatePath(`/account/orders/${order.number}`);
-  revalidatePath("/account/orders");
-  return {
-    ok: true,
-    message: order.paymentStatus === "PAID" ? "Your order has been cancelled. Your refund will be processed to the original payment method within 5–7 business days." : "Your order has been cancelled.",
-  };
+  // Refunds for prepaid orders are processed by the team from the admin (payment status is left untouched here).
+  await db.order.update({ where: { id: order.id }, data: { cancelReason: reason } });
+  revalidatePath("/account", "layout");
+  redirect(`/account/orders/${order.number}?cancelled=1`);
 }
 
 const returnSchema = z
@@ -267,9 +257,8 @@ export async function requestReturnAction(_prev: FormState, fd: FormData): Promi
     },
   });
   await setOrderStatus(item.orderId, "RETURN_REQUESTED", `${parsed.data.type === "EXCHANGE" ? "Exchange" : "Return"} requested for ${item.name}`);
-  revalidatePath(`/account/orders/${item.order.number}`);
-  revalidatePath("/account/returns");
-  return { ok: true, message: `Your ${parsed.data.type === "EXCHANGE" ? "exchange" : "return"} request has been received. Our team will be in touch within 24–48 hours to arrange a pickup.` };
+  revalidatePath("/account", "layout");
+  redirect(`/account/orders/${item.order.number}?requested=${parsed.data.type === "EXCHANGE" ? "exchange" : "return"}`);
 }
 
 // ---------- public order tracking ----------

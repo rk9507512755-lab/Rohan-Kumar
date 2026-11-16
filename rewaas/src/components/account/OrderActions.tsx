@@ -12,7 +12,6 @@ const chevron = { backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http:
 export function CancelOrder({ number }: { number: string }) {
   const [open, setOpen] = useState(false);
   const [state, action, pending] = useActionState(cancelOrderAction, {} as FormState);
-  if (state.ok) return <FormAlert tone="ok">{state.message}</FormAlert>;
   if (!open)
     return (
       <button type="button" onClick={() => setOpen(true)} className="btn-outline btn-sm w-full sm:w-auto">Cancel order</button>
@@ -50,7 +49,6 @@ export function ReturnRequest({ orderItemId, sizes, currentSize, until }: { orde
   const [open, setOpen] = useState(false);
   const [state, action, pending] = useActionState(requestReturnAction, {} as FormState);
   const [type, setType] = useState<"RETURN" | "EXCHANGE">("EXCHANGE");
-  if (state.ok) return <div className="mt-3"><FormAlert tone="ok">{state.message}</FormAlert></div>;
   if (!open)
     return (
       <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1">
