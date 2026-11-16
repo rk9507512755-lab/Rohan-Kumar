@@ -73,6 +73,9 @@ Phir **Settings → Environment Variables** mein `NEXT_PUBLIC_SITE_URL` = aapka 
 7. **Variants** table mein har size + colour ki line banaiye: SKU (unique code), stock. Saree / hamper ke liye size `Free Size` rakhiye.
 8. Status **Active** hote hi product store par dikhne lagta hai. Taiyaari ke dauran **Draft** rakhiye.
 
+### Bahut saari photos ek saath (folder tareeka)
+Har product ke liye `rewaas/public/products/<folder-naam>/` mein `1.jpg`, `2.jpg`… GitHub par upload kariye — agli deploy par apne aap lag jayengi. Poora tareeka aur har product ka folder naam: **`PRODUCT-PHOTO-FOLDERS.md`**.
+
 ### Category, banner aur hamper ki photos
 - **Category photo:** Admin → Categories → category → image upload.
 - **Homepage ke bade banner:** Admin → Banners → desktop (landscape) aur mobile (portrait) dono photos.

@@ -15,7 +15,8 @@
     "db:reset": "prisma db push --force-reset && tsx prisma/seed.ts",
     "images": "node scripts/generate-demo-images.mjs",
     "db:combos": "tsx prisma/combos.ts",
-    "vercel-build": "prisma generate && prisma db push --skip-generate && tsx prisma/ensure-seed.ts && next build"
+    "vercel-build": "prisma generate && prisma db push --skip-generate && tsx prisma/ensure-seed.ts && tsx prisma/sync-photos.ts && next build",
+    "photos:sync": "tsx prisma/sync-photos.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

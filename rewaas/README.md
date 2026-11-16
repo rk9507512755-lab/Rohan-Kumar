@@ -112,6 +112,9 @@ All of these can be edited in **Admin → Settings**. The defaults live in `src/
 
 ## Photography
 
+Owners can bulk-replace product photos by committing them to `public/products/<product-slug>/1.jpg, 2.jpg…` — `npm run photos:sync` (run automatically by `vercel-build`) attaches them. See `PRODUCT-PHOTO-FOLDERS.md`.
+
+
 `public/photos/` holds AI-generated editorial and product images made for this demo. Before launch, replace product images with photos of your actual pieces through **Admin → Products**. Customers should see exactly what they will receive.
 
 The hamper-builder boxes and items, and some category banners, still use illustrated placeholder art in `public/images/`. Replace them from **Admin → Gift Studio**.
