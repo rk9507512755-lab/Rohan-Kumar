@@ -237,10 +237,10 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* 10 — Customer Reviews */}
-      <section className="py-20 lg:py-28">
+      {/* 10 — Customer Reviews (only real testimonials added in Admin → Testimonials) */}
+      {testimonials.length > 0 && <section className="py-20 lg:py-28">
         <div className="container-site">
-          <SectionHeading eyebrow="Loved by Our Clients" title="Worn, Gifted & Treasured" text="Rated 4.8 / 5 by over 12,000 women across India." />
+          <SectionHeading eyebrow="Loved by Our Clients" title="Worn, Gifted & Treasured" text="Words from the women who wear and gift REWAAS." />
         </div>
         <div className="no-scrollbar flex snap-x snap-mandatory gap-5 overflow-x-auto px-4 sm:px-6 lg:mx-auto lg:grid lg:max-w-site lg:grid-cols-3 lg:overflow-visible lg:px-10">
           {testimonials.slice(0, 3).concat(testimonials.slice(3)).map((t, i) => (
@@ -262,7 +262,7 @@ export default async function HomePage() {
             </figure>
           ))}
         </div>
-      </section>
+      </section>}
 
       {/* 11 — Instagram */}
       <section className="pb-20 lg:pb-28">

@@ -35,6 +35,8 @@ Demo logins created by the seed:
 
 Demo coupons: `WELCOME10` (10% off above ₹1,999, max ₹1,500), `FESTIVE500` (₹500 off above ₹5,000), `BRIDAL15`.
 
+> On a live deployment the first build seeds only the catalogue and the admin user (`prisma/ensure-seed.ts` sets `SEED_DEMO_DATA=false`): no demo reviews, testimonials, customers or orders are created. It requires `SEED_ADMIN_EMAIL` and `SEED_ADMIN_PASSWORD` (10+ characters).
+
 > ⚠️ `npm run db:seed` **wipes** catalogue, orders and users before inserting demo data. Never run it against a live database with real orders.
 
 ## Environment variables

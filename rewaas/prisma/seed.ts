@@ -9,6 +9,10 @@ const db = new PrismaClient();
 const slug = (s: string) => s.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 const daysAgo = (n: number) => new Date(Date.now() - n * 86400000);
 
+// Demo reviews, testimonials, customers and orders are for local development only.
+// The first-run seed on a live deployment (prisma/ensure-seed.ts) sets SEED_DEMO_DATA=false.
+const DEMO = process.env.SEED_DEMO_DATA !== "false";
+
 async function main() {
   console.log("Clearing data…");
   await db.$transaction([
@@ -81,7 +85,8 @@ async function main() {
   }
 
   // ---------- Reviews ----------
-  console.log("Reviews…");
+  console.log(DEMO ? "Reviews…" : "Skipping demo reviews");
+  if (DEMO) {
   const reviewers = [["Ananya Sharma", "New Delhi"], ["Meera Iyer", "Chennai"], ["Priya Kapoor", "Mumbai"], ["Sneha Reddy", "Hyderabad"], ["Ishita Bose", "Kolkata"], ["Kavya Nair", "Kochi"], ["Riya Malhotra", "Chandigarh"], ["Aditi Joshi", "Pune"], ["Fatima Sheikh", "Lucknow"], ["Simran Kaur", "Amritsar"]];
   const reviewTexts = [
     ["Even more beautiful in person", "The colour is richer than the photos and the fabric feels luxurious. Got so many compliments at my cousin's wedding."],
@@ -98,6 +103,8 @@ async function main() {
       const [title, body] = reviewTexts[(i + r) % reviewTexts.length];
       await db.review.create({ data: { productId: p.id, name, city, rating: r === 3 ? 4 : 5 - ((i + r) % 5 === 4 ? 1 : 0), title, body, verified: true, createdAt: daysAgo(2 + r * 4 + (i % 7)), images: r === 0 && i % 3 === 0 ? [p.image] : [] } });
     }
+  }
+
   }
 
   // ---------- Hamper builder ----------
@@ -177,7 +184,7 @@ async function main() {
       await db.menuItem.create({ data: { label: ch.name, href: ch.slug === "__create" ? "/gift-studio/create" : `/collections/${ch.slug}`, parentId: parent.id, sortOrder: j } });
   }
 
-  await db.testimonial.createMany({
+  if (DEMO) await db.testimonial.createMany({
     data: [
       { name: "Aishwarya Menon", city: "Bengaluru", productName: "Meenakshi Kanjeevaram Silk Saree", productSlug: "meenakshi-kanjeevaram-silk-saree", rating: 5, text: "I wore the Meenakshi Kanjeevaram for my engagement and my mother couldn't stop touching the border. The weave is exquisite, and it arrived wrapped like an heirloom.", image: "/photos/p-meenakshi-kanjeevaram-silk-saree.jpg", sortOrder: 0 },
       { name: "Tanya Arora", city: "Gurugram", productName: "Bride-to-Be Luxe Hamper", productSlug: "bride-to-be-luxe-hamper", rating: 5, text: "Sent the Bride-to-Be hamper to my best friend in Dubai. She video-called me in tears. The trunk alone is something she'll keep forever.", image: "/photos/p-bride-to-be-luxe-hamper.jpg", sortOrder: 1 },
@@ -211,6 +218,8 @@ async function main() {
   const adminEmail = (process.env.SEED_ADMIN_EMAIL || "admin@rewaas.com").toLowerCase();
   const adminPw = process.env.SEED_ADMIN_PASSWORD || "ChangeMe@123";
   await db.user.create({ data: { email: adminEmail, name: "REWAAS Admin", role: "ADMIN", passwordHash: await bcrypt.hash(adminPw, 12) } });
+  let demoOrders = 0;
+  if (DEMO) {
   const demoHash = await bcrypt.hash("Demo@1234", 12);
   const customers = [];
   const names = ["Ananya Sharma", "Meera Iyer", "Priya Kapoor", "Sneha Reddy", "Ishita Bose", "Kavya Nair", "Riya Malhotra", "Aditi Joshi", "Fatima Sheikh", "Simran Kaur", "Pooja Verma", "Nandini Rao"];
@@ -251,12 +260,14 @@ async function main() {
     });
     orderSeq++;
   }
-  await seedCombos(db);
+  demoOrders = orderSeq;
   await db.newsletterSubscriber.createMany({ data: ["ananya@example.com", "meera@example.com", "shreya@example.com"].map((email) => ({ email, source: "footer" })) });
+  }
+  await seedCombos(db);
 
-  console.log(`\nSeed complete: ${productIds.length} products, ${orderSeq} demo orders.`);
+  console.log(`\nSeed complete: ${productIds.length} products, ${demoOrders} demo orders.`);
   console.log(`Admin login: ${adminEmail} / ${adminPw === "ChangeMe@123" ? "ChangeMe@123 (change it!)" : "(from SEED_ADMIN_PASSWORD)"}`);
-  console.log("Demo customer: demo@rewaas.com / Demo@1234");
+  if (DEMO) console.log("Demo customer: demo@rewaas.com / Demo@1234");
 }
 
 main().then(() => db.$disconnect()).catch(async (e) => { console.error(e); await db.$disconnect(); process.exit(1); });
