@@ -27,7 +27,7 @@ async function main() {
   const catColour: Record<string, string> = { sarees: "#9B1B30", "suits-sets": "#1F5E4A", lehengas: "#E3A6A9", kurtis: "#EFE6D4", "bridal-wear": "#6B1E2A", "gift-hampers": "#5E1A2E" };
   const catIds: Record<string, string> = {};
   for (const [i, c] of CATEGORIES.entries()) {
-    const image = writeArt(`/images/categories/${c.slug}.svg`, productArt({ seed: c.slug, kind: catKind[c.slug], colour: catColour[c.slug], motif: "jaal", variant: 0 }));
+    const image = `/photos/cat-${c.slug}.jpg`;
     const banner = writeArt(`/images/categories/${c.slug}-banner.svg`, editorialArt({ seed: c.slug, w: 1920, h: 640, colours: [catColour[c.slug], "#C9962B", "#E3A6A9"], kinds: [catKind[c.slug], catKind[c.slug], catKind[c.slug]], tone: "ivory", align: "right" }));
     const parent = await db.category.create({
       data: { slug: c.slug, name: c.name, description: c.description, image, bannerImage: banner, sortOrder: i, sizeChart: c.sizeChart as SizeChartType,
@@ -48,14 +48,12 @@ async function main() {
   for (const p of PRODUCTS) {
     const s = slug(p.name);
     const parent = parentOf(p.cat);
-    const images: { url: string; alt: string; colour?: string; sortOrder: number }[] = [];
-    p.colours.forEach((ck, idx) => {
-      const [cname, hex] = C[ck];
-      images.push({ url: writeArt(`/images/products/${s}-${slug(cname)}.svg`, productArt({ seed: s + ck, kind: p.kind, colour: hex, motif: p.motif, variant: 0 })), alt: `${p.name} in ${cname}`, colour: cname, sortOrder: idx === 0 ? 0 : 10 + idx });
-    });
-    const [c0name, c0] = C[p.colours[0]];
-    images.push({ url: writeArt(`/images/products/${s}-detail.svg`, productArt({ seed: s, kind: p.kind, colour: c0, motif: p.motif, variant: 1 })), alt: `${p.name} — fabric detail`, sortOrder: 1 });
-    images.push({ url: writeArt(`/images/products/${s}-closeup.svg`, productArt({ seed: s, kind: p.kind, colour: c0, motif: p.motif, variant: 2 })), alt: `${p.name} — close-up in ${c0name}`, sortOrder: 2 });
+    // Photography (public/photos) — main look + a fabric-detail crop. Extra colourways are offered as swatches.
+    const c0name = C[p.colours[0]][0];
+    const images: { url: string; alt: string; colour?: string; sortOrder: number }[] = [
+      { url: `/photos/p-${s}.jpg`, alt: `${p.name} in ${c0name}`, colour: c0name, sortOrder: 0 },
+      { url: `/photos/p-${s}-detail.jpg`, alt: `${p.name} — ${p.work ? p.work.toLowerCase() : "fabric"} detail`, sortOrder: 1 },
+    ];
     images.sort((a, b) => a.sortOrder - b.sortOrder);
 
     const isHamper = parent.slug === "gift-hampers";
@@ -144,10 +142,10 @@ async function main() {
   console.log("Content…");
   await db.banner.createMany({
     data: [
-      { eyebrow: "The Festive Edit 2026", title: "Elegance in Every Thread.", subtitle: "Discover timeless Indian fashion, thoughtfully curated for every occasion.", ctaLabel: "Shop Collection", ctaHref: "/collections/all", cta2Label: "Explore New Arrivals", cta2Href: "/collections/new-arrivals", desktopImage: "/images/editorial/hero-1.svg", mobileImage: "/images/editorial/hero-1-mobile.svg", sortOrder: 0 },
-      { eyebrow: "The Bridal Edit", title: "For the Day You've Always Imagined.", subtitle: "Heirloom lehengas and wedding silks, made to be remembered.", ctaLabel: "Explore Bridal", ctaHref: "/collections/bridal", cta2Label: "Book a Styling Call", cta2Href: "/pages/contact", desktopImage: "/images/editorial/hero-2.svg", mobileImage: "/images/editorial/hero-2-mobile.svg", sortOrder: 1 },
-      { eyebrow: "REWAAS Gift Studio", title: "Gifts, Thoughtfully Composed.", subtitle: "Curated hampers for brides, festivals and every milestone — or create your own.", ctaLabel: "Create Your Own Hamper", ctaHref: "/gift-studio/create", cta2Label: "Shop Hampers", cta2Href: "/collections/gift-hampers", desktopImage: "/images/editorial/hero-3.svg", mobileImage: "/images/editorial/hero-3-mobile.svg", sortOrder: 2 },
-      { eyebrow: "Limited Edition", title: "Midnight Zari", subtitle: "A capsule of twelve pieces in deep midnight and antique gold — woven once, never repeated.", ctaLabel: "Discover the Capsule", ctaHref: "/collections/limited-edition", desktopImage: "/images/editorial/featured.svg", mobileImage: "/images/editorial/featured-mobile.svg", placement: "featured", sortOrder: 0 },
+      { eyebrow: "The Festive Edit 2026", title: "Elegance in Every Thread.", subtitle: "Discover timeless Indian fashion, thoughtfully curated for every occasion.", ctaLabel: "Shop Collection", ctaHref: "/collections/all", cta2Label: "Explore New Arrivals", cta2Href: "/collections/new-arrivals", desktopImage: "/photos/hero-1.jpg", mobileImage: "/photos/hero-1-mobile.jpg", sortOrder: 0 },
+      { eyebrow: "The Bridal Edit", title: "For the Day You've Always Imagined.", subtitle: "Heirloom lehengas and wedding silks, made to be remembered.", ctaLabel: "Explore Bridal", ctaHref: "/collections/bridal", cta2Label: "Book a Styling Call", cta2Href: "/pages/contact", desktopImage: "/photos/hero-2.jpg", mobileImage: "/photos/hero-2-mobile.jpg", sortOrder: 1 },
+      { eyebrow: "REWAAS Gift Studio", title: "Gifts, Thoughtfully Composed.", subtitle: "Curated hampers for brides, festivals and every milestone — or create your own.", ctaLabel: "Create Your Own Hamper", ctaHref: "/gift-studio/create", cta2Label: "Shop Hampers", cta2Href: "/collections/gift-hampers", desktopImage: "/photos/hero-3.jpg", mobileImage: "/photos/hero-3-mobile.jpg", sortOrder: 2 },
+      { eyebrow: "Limited Edition", title: "Midnight Zari", subtitle: "A capsule of twelve pieces in deep midnight and antique gold — woven once, never repeated.", ctaLabel: "Discover the Capsule", ctaHref: "/collections/limited-edition", desktopImage: "/photos/featured.jpg", mobileImage: "/photos/featured-mobile.jpg", placement: "featured", sortOrder: 0 },
     ],
   });
   await db.announcement.createMany({
@@ -160,14 +158,14 @@ async function main() {
   });
 
   const menu = [
-    { label: "Sarees", href: "/collections/sarees", image: "/images/categories/sarees.svg", children: CATEGORIES[0].children },
-    { label: "Suits & Sets", href: "/collections/suits-sets", image: "/images/categories/suits-sets.svg", children: CATEGORIES[1].children },
-    { label: "Lehengas", href: "/collections/lehengas", image: "/images/categories/lehengas.svg", children: CATEGORIES[2].children },
-    { label: "Kurtis", href: "/collections/kurtis", image: "/images/categories/kurtis.svg", children: CATEGORIES[3].children },
-    { label: "Bridal Collection", href: "/collections/bridal", image: "/images/editorial/bridal-edit.svg", children: [
+    { label: "Sarees", href: "/collections/sarees", image: "/photos/cat-sarees.jpg", children: CATEGORIES[0].children },
+    { label: "Suits & Sets", href: "/collections/suits-sets", image: "/photos/cat-suits-sets.jpg", children: CATEGORIES[1].children },
+    { label: "Lehengas", href: "/collections/lehengas", image: "/photos/cat-lehengas.jpg", children: CATEGORIES[2].children },
+    { label: "Kurtis", href: "/collections/kurtis", image: "/photos/cat-kurtis.jpg", children: CATEGORIES[3].children },
+    { label: "Bridal Collection", href: "/collections/bridal", image: "/photos/bridal-edit.jpg", children: [
       { slug: "bridal-lehengas", name: "Designer Lehengas" }, { slug: "kanjeevaram-sarees", name: "Bridal Sarees" }, { slug: "anarkali-suits", name: "Wedding Suits" },
       { slug: "bridal-accessories", name: "Bridal Accessories" }, { slug: "bridal-hampers", name: "Bride-to-Be Hampers" }, { slug: "dupattas", name: "Bridal Dupattas" } ] },
-    { label: "Gift Hampers", href: "/gift-studio", image: "/images/categories/gift-hampers.svg", children: [
+    { label: "Gift Hampers", href: "/gift-studio", image: "/photos/cat-gift-hampers.jpg", children: [
       ...CATEGORIES[5].children, { slug: "__create", name: "Create Your Own Hamper" } ] },
     { label: "Festive Collection", href: "/collections/festive", image: null, children: [] },
     { label: "New Arrivals", href: "/collections/new-arrivals", image: null, children: [] },
@@ -180,11 +178,11 @@ async function main() {
 
   await db.testimonial.createMany({
     data: [
-      { name: "Aishwarya Menon", city: "Bengaluru", productName: "Meenakshi Kanjeevaram Silk Saree", productSlug: "meenakshi-kanjeevaram-silk-saree", rating: 5, text: "I wore the Meenakshi Kanjeevaram for my engagement and my mother couldn't stop touching the border. The weave is exquisite, and it arrived wrapped like an heirloom.", image: "/images/products/meenakshi-kanjeevaram-silk-saree-mustard.svg", sortOrder: 0 },
-      { name: "Tanya Arora", city: "Gurugram", productName: "Bride-to-Be Luxe Hamper", productSlug: "bride-to-be-luxe-hamper", rating: 5, text: "Sent the Bride-to-Be hamper to my best friend in Dubai. She video-called me in tears. The trunk alone is something she'll keep forever.", image: "/images/products/bride-to-be-luxe-hamper-wine.svg", sortOrder: 1 },
-      { name: "Nikita Deshpande", city: "Pune", productName: "Zohra Embroidered Anarkali Set", productSlug: "zohra-embroidered-anarkali-set", rating: 5, text: "The fit was perfect straight out of the box and the zardozi is so neat. The team even helped me choose my size on WhatsApp.", image: "/images/products/zohra-embroidered-anarkali-set-emerald.svg", sortOrder: 2 },
-      { name: "Shreya Banerjee", city: "Kolkata", productName: "Ada Chikankari Kurti", productSlug: "ada-chikankari-kurti", rating: 4, text: "My third Ada kurti! Soft, breathable and the chikankari is genuinely handmade. Perfect for long office days.", image: "/images/products/ada-chikankari-kurti-ivory.svg", sortOrder: 3 },
-      { name: "Rukhsar Khan", city: "Hyderabad", productName: "Gulabo Festive Lehenga", productSlug: "gulabo-festive-lehenga", rating: 5, text: "Ordered five Gulabo lehengas for my bridesmaids. Each one arrived beautifully pressed with a name tag — such a thoughtful touch.", image: "/images/products/gulabo-festive-lehenga-blush-pink.svg", sortOrder: 4 },
+      { name: "Aishwarya Menon", city: "Bengaluru", productName: "Meenakshi Kanjeevaram Silk Saree", productSlug: "meenakshi-kanjeevaram-silk-saree", rating: 5, text: "I wore the Meenakshi Kanjeevaram for my engagement and my mother couldn't stop touching the border. The weave is exquisite, and it arrived wrapped like an heirloom.", image: "/photos/p-meenakshi-kanjeevaram-silk-saree.jpg", sortOrder: 0 },
+      { name: "Tanya Arora", city: "Gurugram", productName: "Bride-to-Be Luxe Hamper", productSlug: "bride-to-be-luxe-hamper", rating: 5, text: "Sent the Bride-to-Be hamper to my best friend in Dubai. She video-called me in tears. The trunk alone is something she'll keep forever.", image: "/photos/p-bride-to-be-luxe-hamper.jpg", sortOrder: 1 },
+      { name: "Nikita Deshpande", city: "Pune", productName: "Zohra Embroidered Anarkali Set", productSlug: "zohra-embroidered-anarkali-set", rating: 5, text: "The fit was perfect straight out of the box and the zardozi is so neat. The team even helped me choose my size on WhatsApp.", image: "/photos/p-zohra-embroidered-anarkali-set.jpg", sortOrder: 2 },
+      { name: "Shreya Banerjee", city: "Kolkata", productName: "Ada Chikankari Kurti", productSlug: "ada-chikankari-kurti", rating: 4, text: "My third Ada kurti! Soft, breathable and the chikankari is genuinely handmade. Perfect for long office days.", image: "/photos/p-ada-chikankari-kurti.jpg", sortOrder: 3 },
+      { name: "Rukhsar Khan", city: "Hyderabad", productName: "Gulabo Festive Lehenga", productSlug: "gulabo-festive-lehenga", rating: 5, text: "Ordered five Gulabo lehengas for my bridesmaids. Each one arrived beautifully pressed with a name tag — such a thoughtful touch.", image: "/photos/p-gulabo-festive-lehenga.jpg", sortOrder: 4 },
     ],
   });
 
