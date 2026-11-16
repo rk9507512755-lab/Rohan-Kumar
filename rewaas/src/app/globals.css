@@ -69,3 +69,21 @@
   .no-print { display: none !important; }
   body { background: #fff; }
 }
+
+/* Scroll reveal (see components/Reveal.tsx). Content stays visible without JS via the noscript-safe default below. */
+@layer utilities {
+  .reveal { opacity: 0; transform: translateY(26px); transition: opacity .9s cubic-bezier(.2,.7,.2,1), transform .9s cubic-bezier(.2,.7,.2,1); }
+  .reveal.is-in { opacity: 1; transform: none; }
+  .reveal-stagger > * { opacity: 0; transform: translateY(22px); transition: opacity .8s cubic-bezier(.2,.7,.2,1), transform .8s cubic-bezier(.2,.7,.2,1); }
+  .reveal-stagger.is-in > * { opacity: 1; transform: none; }
+  .reveal-stagger.is-in > *:nth-child(2) { transition-delay: .08s; }
+  .reveal-stagger.is-in > *:nth-child(3) { transition-delay: .16s; }
+  .reveal-stagger.is-in > *:nth-child(4) { transition-delay: .24s; }
+  .reveal-stagger.is-in > *:nth-child(5) { transition-delay: .32s; }
+  .reveal-stagger.is-in > *:nth-child(6) { transition-delay: .40s; }
+  .reveal-stagger.is-in > *:nth-child(7) { transition-delay: .48s; }
+  .reveal-stagger.is-in > *:nth-child(n+8) { transition-delay: .56s; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal, .reveal-stagger > * { opacity: 1 !important; transform: none !important; }
+}

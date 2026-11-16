@@ -3,6 +3,8 @@ import Img from "@/components/Img";
 import ProductCard from "@/components/ProductCard";
 import SectionHeading from "@/components/SectionHeading";
 import Newsletter from "@/components/Newsletter";
+import Reveal from "@/components/Reveal";
+import Marquee from "@/components/Marquee";
 import HeroCarousel from "@/components/home/HeroCarousel";
 import BestSellers from "@/components/home/BestSellers";
 import { InstagramIcon, StarIcon, ArrowRight } from "@/components/icons";
@@ -85,11 +87,12 @@ export default async function HomePage() {
 
       {/* 2 — Hero */}
       <HeroCarousel slides={hero} />
+      <Marquee items={["Handwoven in Varanasi", "Chikankari from Lucknow", "Kanjeevaram from Kanchipuram", "Bandhani from Jamnagar", "Block prints from Sanganer", "Complimentary shipping above ₹1,999", "Easy 7-day exchanges", "Gift-wrapped by hand"]} />
 
       {/* 3 — Shop by Category */}
       <section className="container-site py-20 lg:py-28">
         <SectionHeading eyebrow="The REWAAS Wardrobe" title="Shop by Category" text="Six chapters of Indian craft — each one woven, embroidered and finished by hand." />
-        <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3">
+        <Reveal stagger className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3">
           {categories.map((c, i) => (
             <Link key={c.id} href={`/collections/${c.slug}`} className={`group relative block overflow-hidden bg-ivory-200 ${i === 0 || i === 5 ? "lg:row-span-1" : ""} aspect-[4/5]`}>
               {c.image && <Img src={c.image} alt={c.name} fill sizes="(min-width:1024px) 33vw, 50vw" className="img-zoom object-cover" />}
@@ -100,16 +103,16 @@ export default async function HomePage() {
               </div>
             </Link>
           ))}
-        </div>
+        </Reveal>
       </section>
 
       {/* 4 — New Arrivals */}
       <section className="bg-white/60 py-20 lg:py-28">
         <div className="container-site">
           <SectionHeading align="left" eyebrow="Just Arrived" title="New Arrivals" text="Fresh from our looms and ateliers — the newest pieces to join REWAAS." href="/collections/new-arrivals" linkLabel="Shop all new arrivals" />
-          <div className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-4 lg:gap-x-6">
+          <Reveal stagger className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-4 lg:gap-x-6">
             {newArrivals.map((p, i) => <ProductCard key={p.id} p={p} priority={i < 4} />)}
-          </div>
+          </Reveal>
         </div>
       </section>
 
@@ -140,7 +143,7 @@ export default async function HomePage() {
       {/* 7 — The Bridal Edit */}
       <section className="py-20 lg:py-28">
         <div className="container-site grid items-center gap-10 lg:grid-cols-12 lg:gap-16">
-          <div className="relative lg:col-span-5">
+          <Reveal className="relative lg:col-span-5">
             <div className="relative aspect-[4/5] overflow-hidden">
               <Img src="/photos/bridal-edit.jpg" alt="A REWAAS bride in a velvet zardozi lehenga" fill sizes="(min-width:1024px) 40vw, 100vw" className="object-cover" />
             </div>
@@ -148,8 +151,8 @@ export default async function HomePage() {
               <p className="font-display text-4xl">900+</p>
               <p className="mt-1 text-[10px] uppercase tracking-[0.2em] text-gold-300">hours of handwork<br />in every bridal lehenga</p>
             </div>
-          </div>
-          <div className="lg:col-span-7">
+          </Reveal>
+          <Reveal className="lg:col-span-7" delay={150}>
             <p className="eyebrow mb-3">The Bridal Edit</p>
             <h2 className="h-section text-balance">For the day you&apos;ve always imagined.</h2>
             <p className="lead mt-5 max-w-xl">From the first fitting to the final phera — heirloom lehengas, Kanjeevaram silks and finishing pieces, made by master karigars and styled by our bridal team. Book a private video consultation and we&apos;ll compose your entire trousseau with you.</p>
@@ -166,14 +169,14 @@ export default async function HomePage() {
               <Link href="/collections/bridal" className="btn-primary">Explore the Bridal Edit</Link>
               <Link href="/pages/contact" className="btn-outline">Book a Bridal Consultation</Link>
             </div>
-          </div>
+          </Reveal>
         </div>
       </section>
 
       {/* 8 — REWAAS Gift Studio */}
       <section className="relative overflow-hidden bg-wine-700 text-ivory">
         <div className="container-site grid gap-12 py-20 lg:grid-cols-12 lg:py-28">
-          <div className="lg:col-span-5">
+          <Reveal className="lg:col-span-5">
             <p className="text-[11px] uppercase tracking-[0.32em] text-gold-300">REWAAS Gift Studio</p>
             <h2 className="h-section mt-3 text-balance text-ivory">Gifts, thoughtfully composed.</h2>
             <p className="mt-5 max-w-md text-[15px] leading-relaxed text-ivory/75">In Indian homes, a gift is a language. Choose one of our curated hampers — or compose your own, piece by piece, with a handwritten note and signature wrapping.</p>
@@ -186,8 +189,8 @@ export default async function HomePage() {
               </ol>
               <Link href="/gift-studio/create" className="btn-light mt-7 w-full sm:w-auto">Start Creating</Link>
             </div>
-          </div>
-          <div className="grid grid-cols-2 content-center gap-3 sm:grid-cols-4 lg:col-span-7">
+          </Reveal>
+          <Reveal stagger className="grid grid-cols-2 content-center gap-3 sm:grid-cols-4 lg:col-span-7">
             {GIFTING.map((g) => (
               <Link key={g.label} href={g.href} className="group relative block aspect-[4/5] overflow-hidden bg-wine-800">
                 <Img src={g.image} alt={g.label} fill sizes="(min-width:1024px) 22vw, 45vw" className="img-zoom object-cover" />
@@ -195,7 +198,7 @@ export default async function HomePage() {
                 <span className="absolute bottom-3 left-3 right-3 font-display text-[17px] leading-tight sm:text-lg">{g.label}</span>
               </Link>
             ))}
-          </div>
+          </Reveal>
         </div>
       </section>
 
@@ -205,12 +208,12 @@ export default async function HomePage() {
           <Img src={featured.mobileImage ?? featured.desktopImage} alt={featured.title} fill sizes="100vw" className="object-cover md:hidden" />
           <Img src={featured.desktopImage} alt={featured.title} fill sizes="100vw" className="hidden object-cover md:block" />
           <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/20 to-ink/10" />
-          <div className="container-site relative flex h-full flex-col items-center justify-end pb-16 text-center text-ivory">
+          <Reveal className="container-site relative flex h-full flex-col items-center justify-end pb-16 text-center text-ivory">
             {featured.eyebrow && <p className="text-[11px] uppercase tracking-[0.34em] text-gold-300">{featured.eyebrow}</p>}
             <h2 className="mt-3 font-display text-5xl sm:text-7xl">{featured.title}</h2>
             {featured.subtitle && <p className="mt-4 max-w-lg text-[15px] text-ivory/80">{featured.subtitle}</p>}
             {featured.ctaHref && <Link href={featured.ctaHref} className="btn-ghost-light mt-8">{featured.ctaLabel ?? "Discover"}</Link>}
-          </div>
+          </Reveal>
         </section>
       )}
 
@@ -246,14 +249,14 @@ export default async function HomePage() {
         <div className="container-site">
           <SectionHeading eyebrow={`@${settings.instagramHandle}`} title="Styled by You" text="Tag #WearREWAAS to be featured — our favourite way to see the pieces we make come alive." />
         </div>
-        <div className="grid grid-cols-2 gap-1 sm:grid-cols-4 lg:grid-cols-8">
+        <Reveal stagger className="grid grid-cols-2 gap-1 sm:grid-cols-4 lg:grid-cols-8">
           {INSTA.map((src, i) => (
             <a key={src} href={settings.instagramUrl} target="_blank" rel="noopener noreferrer" className="group relative block aspect-square overflow-hidden bg-ivory-200" aria-label={`Instagram post ${i + 1}`}>
               <Img src={src} alt="" fill sizes="(min-width:1024px) 12.5vw, 50vw" className="img-zoom object-cover object-top" />
               <div className="absolute inset-0 flex items-center justify-center bg-wine/0 text-ivory opacity-0 transition duration-500 group-hover:bg-wine/45 group-hover:opacity-100"><InstagramIcon size={28} /></div>
             </a>
           ))}
-        </div>
+        </Reveal>
       </section>
 
       {/* 12 — Newsletter */}

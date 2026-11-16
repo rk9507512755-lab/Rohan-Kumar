@@ -1,5 +1,6 @@
 import Link from "next/link";
 import ProductCard from "@/components/ProductCard";
+import Reveal from "@/components/Reveal";
 import Filters, { ActiveFilters, SortSelect, type Facets } from "./Filters";
 import type { CardProduct, ListingParams } from "@/lib/catalog";
 
@@ -17,9 +18,9 @@ export default function ProductListing({ products, total, take, facets, params, 
         <ActiveFilters facets={facets} />
         {products.length ? (
           <>
-            <div className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3 lg:gap-x-6">
+            <Reveal stagger className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3 lg:gap-x-6">
               {products.map((p, i) => <ProductCard key={p.id} p={p} priority={i < 3} sizes="(min-width:1024px) 26vw, 50vw" />)}
-            </div>
+            </Reveal>
             <div className="mt-14 flex flex-col items-center gap-4">
               <p className="text-xs text-ink-400">Showing {products.length} of {total}</p>
               <div className="h-[2px] w-48 bg-ink-200/70"><div className="h-full bg-wine" style={{ width: `${Math.round((products.length / Math.max(1, total)) * 100)}%` }} /></div>

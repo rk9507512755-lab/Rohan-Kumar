@@ -55,7 +55,7 @@ export default function ProductCard({ p, priority = false, sizes = "(min-width:1
           <HeartIcon size={18} filled={wished} />
         </button>
         {!soldOut && (
-          <div className="absolute inset-x-0 bottom-0 p-3 transition duration-300 lg:translate-y-3 lg:opacity-0 lg:group-hover:translate-y-0 lg:group-hover:opacity-100 lg:group-focus-within:translate-y-0 lg:group-focus-within:opacity-100">
+          <div className={cn("absolute bottom-0 right-0 p-2.5 transition duration-300 lg:left-0 lg:p-3 lg:translate-y-3 lg:opacity-0 lg:group-hover:translate-y-0 lg:group-hover:opacity-100 lg:group-focus-within:translate-y-0 lg:group-focus-within:opacity-100", picking && "left-0")}>
             {picking ? (
               <div className="animate-fadeIn bg-ivory/95 p-3 backdrop-blur">
                 <p className="mb-2 text-center text-[10px] uppercase tracking-[0.16em] text-ink-400">Select size{colours.length > 1 ? ` · ${firstColour}` : ""}</p>
@@ -69,8 +69,8 @@ export default function ProductCard({ p, priority = false, sizes = "(min-width:1
                 </div>
               </div>
             ) : (
-              <button onClick={onQuick} disabled={!!adding} className="flex w-full items-center justify-center gap-2 bg-ivory/95 py-3 text-[11px] uppercase tracking-[0.18em] text-ink backdrop-blur transition hover:bg-wine hover:text-ivory">
-                <PlusIcon size={14} />{adding ? "Adding…" : "Quick Add"}
+              <button onClick={onQuick} disabled={!!adding} aria-label={`Quick add ${p.name}`} className="flex h-10 w-10 items-center justify-center gap-2 rounded-full bg-ivory/95 text-ink shadow-sm backdrop-blur transition hover:bg-wine hover:text-ivory lg:h-auto lg:w-full lg:rounded-none lg:py-3 lg:text-[11px] lg:uppercase lg:tracking-[0.18em] lg:shadow-none">
+                <PlusIcon size={16} /><span className="hidden lg:inline">{adding ? "Adding…" : "Quick Add"}</span>
               </button>
             )}
           </div>
