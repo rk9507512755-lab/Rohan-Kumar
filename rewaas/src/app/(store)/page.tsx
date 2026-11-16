@@ -150,8 +150,8 @@ export default async function HomePage() {
               <Img src="/photos/bridal-edit.jpg" alt="A REWAAS bride in a velvet zardozi lehenga" fill sizes="(min-width:1024px) 40vw, 100vw" className="object-cover" />
             </div>
             <div className="absolute -bottom-6 -right-2 hidden bg-wine px-8 py-6 text-ivory sm:block lg:-right-10">
-              <p className="font-display text-4xl">900+</p>
-              <p className="mt-1 text-[10px] uppercase tracking-[0.2em] text-gold-300">hours of handwork<br />in every bridal lehenga</p>
+              <p className="font-display text-4xl">Handmade</p>
+              <p className="mt-1 text-[10px] uppercase tracking-[0.2em] text-gold-300">by master karigars<br />for your big day</p>
             </div>
           </Reveal>
           <Reveal className="lg:col-span-7" delay={150}>

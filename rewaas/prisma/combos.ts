@@ -15,9 +15,9 @@ type Combo = {
 export const COMBOS: Combo[] = [
   { slug: "kanjeevaram-shagun-gift-combo", name: "Kanjeevaram Shagun Gift Combo", price: 27900, mrp: 31650, colour: ["Mustard", "#C9962B"], sizes: ["Free Size"], sizeChart: "SAREE",
     occasions: ["wedding", "traditional", "festive"], collections: ["bridal", "festive", "gift-combo"], best: true, featured: true, popularity: 96,
-    short: "A silk-mark Kanjeevaram saree, kundan jhumkas and a zardozi potli — boxed in our velvet keepsake trunk.",
+    short: "A Kanjeevaram silk saree, kundan jhumkas and a zardozi potli — boxed in our velvet keepsake trunk.",
     inside: ["Meenakshi Kanjeevaram silk saree with blouse piece", "Kundan & pearl jhumkas", "Zardozi velvet potli bag", "Hand-lettered shagun card", "Signature velvet keepsake trunk"],
-    description: "The gift a daughter-in-law, sister or bride remembers forever. A Silk Mark certified Kanjeevaram with a contrast korvai temple border, paired with kundan jhumkas and a hand-embroidered potli, nestled in our wine-velvet keepsake trunk with a hand-lettered shagun card.",
+    description: "The gift a daughter-in-law, sister or bride remembers forever. A Kanjeevaram silk saree with a contrast korvai temple border, paired with kundan jhumkas and a hand-embroidered potli, nestled in our wine-velvet keepsake trunk with a hand-lettered shagun card.",
     images: [["/photos/combo-kanjeevaram-shagun.jpg", "Kanjeevaram saree, kundan jhumkas and potli gift combo"], ["/photos/p-meenakshi-kanjeevaram-silk-saree.jpg", "The Kanjeevaram saree"], ["/photos/p-kundan-bridal-necklace-set.jpg", "Kundan jewellery"], ["/photos/p-noori-zardozi-potli-bag.jpg", "Zardozi potli"]] },
   { slug: "banarasi-bridal-trousseau-box", name: "Banarasi Bridal Trousseau Box", price: 26500, mrp: 30400, colour: ["Ruby Red", "#9B1B30"], sizes: ["Free Size"], sizeChart: "SAREE",
     occasions: ["wedding"], collections: ["bridal", "gift-combo"], featured: true, popularity: 74,
@@ -64,7 +64,7 @@ export const COMBOS: Combo[] = [
 ];
 
 export const BUILDER_ITEMS = [
-  { name: "Kanjeevaram Silk Saree", description: "Silk-mark Kanjeevaram with blouse piece", group: "Sarees & Suits", price: 2290000, image: "/photos/builder/kanjeevaram-saree.jpg", max: 1, stock: 12 },
+  { name: "Kanjeevaram Silk Saree", description: "Kanjeevaram silk with blouse piece", group: "Sarees & Suits", price: 2290000, image: "/photos/builder/kanjeevaram-saree.jpg", max: 1, stock: 12 },
   { name: "Banarasi Katan Saree", description: "Hand-woven Banarasi with blouse piece", group: "Sarees & Suits", price: 1790000, image: "/photos/builder/banarasi-saree.jpg", max: 1, stock: 14 },
   { name: "Embroidered Organza Saree", description: "Sequin-star organza with blouse piece", group: "Sarees & Suits", price: 1190000, image: "/photos/builder/organza-saree.jpg", max: 1, stock: 18 },
   { name: "Chanderi Saree", description: "Zari-butti Chanderi with blouse piece", group: "Sarees & Suits", price: 390000, image: "/photos/builder/chanderi-saree.jpg", max: 2, stock: 30 },

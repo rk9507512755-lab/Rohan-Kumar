@@ -127,6 +127,6 @@ Har product ke liye `rewaas/public/products/<folder-naam>/` mein `1.jpg`, `2.jpg
 - [ ] Settings mein apna phone, email, address, GSTIN, Instagram link
 - [ ] Policy pages (shipping, returns, privacy, terms) apne hisaab se padh kar edit
 - [ ] Demo coupons (WELCOME10 etc.) rakhne hain ya hatane hain — decide karein
-- [ ] Product descriptions mein likhe daave check kariye (jaise "Silk Mark certified", "19 din mein buna", homepage par "900+ hours of handwork") — jo sach na ho, use badal dijiye (Admin → Products, aur homepage text ke liye mujhe bataiye)
+- [ ] Product descriptions apne asli products ke hisaab se likhiye (fabric, kaam, kahan bana). Pakke na hon aise daave (jaise "Silk Mark certified", "X ghante ka kaam") demo copy se hata diye gaye hain — sach ho to hi jodiye
 - [ ] Ek test order (COD) khud place karke poora flow check
 - [ ] Razorpay live keys
