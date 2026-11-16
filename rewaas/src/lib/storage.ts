@@ -3,7 +3,8 @@ import { mkdir, writeFile } from "fs/promises";
 import path from "path";
 import crypto from "crypto";
 
-// Local-disk media storage served via /api/media/*. Swap for S3/Cloudinary in multi-instance deployments.
+// Media storage. On Vercel (BLOB_READ_WRITE_TOKEN set) files go to Vercel Blob and the public Blob URL is stored;
+// elsewhere they are written to UPLOAD_DIR and served by /api/media/*.
 export const UPLOAD_DIR = path.resolve(process.env.UPLOAD_DIR || "./storage/uploads");
 const ALLOWED: Record<string, string> = {
   "image/jpeg": ".jpg",
@@ -22,6 +23,11 @@ export async function saveUpload(file: File): Promise<string> {
   const now = new Date();
   const sub = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, "0")}`;
   const name = `${crypto.randomBytes(10).toString("hex")}${ext}`;
+  if (process.env.BLOB_READ_WRITE_TOKEN) {
+    const { put } = await import("@vercel/blob");
+    const blob = await put(`uploads/${sub}/${name}`, file, { access: "public", contentType: file.type, addRandomSuffix: false });
+    return blob.url;
+  }
   const dir = path.join(UPLOAD_DIR, sub);
   await mkdir(dir, { recursive: true });
   await writeFile(path.join(dir, name), Buffer.from(await file.arrayBuffer()));

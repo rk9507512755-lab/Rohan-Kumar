@@ -8,6 +8,7 @@ const nextConfig = {
       { protocol: "https", hostname: "res.cloudinary.com" },
       { protocol: "https", hostname: "**.amazonaws.com" },
       { protocol: "https", hostname: "cdn.shopify.com" },
+      { protocol: "https", hostname: "**.public.blob.vercel-storage.com" },
     ],
   },
   experimental: { serverActions: { bodySizeLimit: "12mb" } },

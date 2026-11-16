@@ -14,13 +14,15 @@
     "db:seed": "tsx prisma/seed.ts",
     "db:reset": "prisma db push --force-reset && tsx prisma/seed.ts",
     "images": "node scripts/generate-demo-images.mjs",
-    "db:combos": "tsx prisma/combos.ts"
+    "db:combos": "tsx prisma/combos.ts",
+    "vercel-build": "prisma generate && prisma db push --skip-generate && tsx prisma/ensure-seed.ts && next build"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",
+    "@vercel/blob": "^1.1.1",
     "bcryptjs": "^3.0.3",
     "jose": "^6.2.17",
     "next": "^15.5.29",
