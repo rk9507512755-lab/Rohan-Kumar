@@ -52,8 +52,8 @@ export default function HamperBuilder({ boxes, components, packaging }: { boxes:
   };
 
   return (
-    <div className="mt-12 grid gap-10 lg:grid-cols-[1fr_400px] lg:gap-14">
-      <div>
+    <div className="mt-12 grid gap-10 lg:grid-cols-[minmax(0,1fr)_400px] lg:gap-14">
+      <div className="min-w-0">
         {/* Stepper */}
         <ol className="no-scrollbar -mx-4 flex gap-6 overflow-x-auto border-b border-ink-200/70 px-4 pb-4 sm:mx-0 sm:px-0">
           {STEPS.map((s, i) => (
@@ -70,15 +70,17 @@ export default function HamperBuilder({ boxes, components, packaging }: { boxes:
             <div className="grid gap-5 sm:grid-cols-3">
               {boxes.map((b) => (
                 <button key={b.id} disabled={b.stock <= 0} onClick={() => { setBoxId(b.id); if (units > b.capacity) setError(`You've chosen ${units} items — ${b.name} holds ${b.capacity}. Remove a few in the next step.`); else setError(null); }}
-                  className={cn("group text-left transition", b.stock <= 0 && "opacity-50")}>
+                  className={cn("group grid grid-cols-[110px_1fr] items-center gap-4 text-left transition sm:block", b.stock <= 0 && "opacity-50")}>
                   <div className={cn("relative aspect-[4/5] overflow-hidden bg-ivory-200 ring-offset-4 ring-offset-ivory transition", boxId === b.id ? "ring-1 ring-wine" : "group-hover:ring-1 group-hover:ring-ink-200")}>
                     <Img src={b.image} alt={b.name} fill sizes="(min-width:640px) 22vw, 90vw" className="img-zoom object-cover" />
                     {boxId === b.id && <span className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-wine text-ivory"><CheckIcon size={14} /></span>}
                   </div>
-                  <p className="mt-3 font-display text-xl">{b.name}</p>
-                  <p className="text-sm text-ink-400">{b.description}</p>
-                  <p className="mt-2 text-sm"><span className="font-medium">{inr(b.price)}</span><span className="text-ink-400"> · holds {b.capacity} items{b.dimensions ? ` · ${b.dimensions}` : ""}</span></p>
-                  {b.stock <= 0 && <p className="text-xs text-wine">Sold out</p>}
+                  <div>
+                    <p className="font-display text-xl sm:mt-3">{b.name}</p>
+                    <p className="text-sm text-ink-400">{b.description}</p>
+                    <p className="mt-2 text-sm"><span className="font-medium">{inr(b.price)}</span><span className="text-ink-400"> · holds {b.capacity} items{b.dimensions ? ` · ${b.dimensions}` : ""}</span></p>
+                    {b.stock <= 0 && <p className="text-xs text-wine">Sold out</p>}
+                  </div>
                 </button>
               ))}
             </div>

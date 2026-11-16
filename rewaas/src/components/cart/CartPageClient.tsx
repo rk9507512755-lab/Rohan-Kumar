@@ -57,7 +57,7 @@ export default function CartPageClient({ initial }: { initial: CartView }) {
     );
 
   return (
-    <div className="grid gap-12 lg:grid-cols-[1fr_400px] lg:gap-16">
+    <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_400px] lg:gap-16">
       <div>
         <h1 className="h-section">Your Bag <span className="font-sans text-base text-ink-400">({cart.count} {cart.count === 1 ? "item" : "items"})</span></h1>
         <div className="mt-6"><FreeShippingBar remaining={cart.totals.freeShippingRemaining} /></div>

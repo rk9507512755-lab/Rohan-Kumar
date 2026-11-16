@@ -108,7 +108,7 @@ export default function CheckoutClient({ cart: initialCart, user, addresses, sta
         <p className="hidden items-center gap-2 text-xs text-ink-400 sm:flex"><ShieldIcon size={16} className="text-gold-600" />256-bit encrypted · Payments by Razorpay</p>
       </div>
       {formError && <div role="alert" className="mb-6 border-l-2 border-wine bg-wine-50 px-4 py-3 text-sm text-wine-800">{formError}</div>}
-      <div className="grid gap-12 lg:grid-cols-[1fr_420px] lg:gap-16">
+      <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_420px] lg:gap-16">
         <div className="space-y-12">
           {/* Contact */}
           <section>
