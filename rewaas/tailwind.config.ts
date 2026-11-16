@@ -22,6 +22,7 @@ const config: Config = {
         fadeUp: { "0%": { opacity: "0", transform: "translateY(14px)" }, "100%": { opacity: "1", transform: "translateY(0)" } },
         fadeIn: { "0%": { opacity: "0" }, "100%": { opacity: "1" } },
         slideIn: { "0%": { transform: "translateX(100%)" }, "100%": { transform: "translateX(0)" } },
+        heroZoom: { "0%": { transform: "scale(1.06)" }, "100%": { transform: "scale(1)" } },
       },
       animation: {
         fadeUp: "fadeUp .7s cubic-bezier(.2,.7,.2,1) both",
