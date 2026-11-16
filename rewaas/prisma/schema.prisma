@@ -1,0 +1,482 @@
+// REWAAS data model
+// All money values are stored as integers in paise (₹1 = 100 paise) to avoid float rounding.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CUSTOMER
+  ADMIN
+}
+
+enum ProductStatus {
+  ACTIVE
+  DRAFT
+  ARCHIVED
+}
+
+enum SizeChartType {
+  NONE
+  SAREE
+  SUIT
+  LEHENGA
+  KURTI
+}
+
+enum OrderStatus {
+  PENDING_PAYMENT
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  OUT_FOR_DELIVERY
+  DELIVERED
+  CANCELLED
+  RETURN_REQUESTED
+  RETURNED
+}
+
+enum PaymentMethod {
+  RAZORPAY
+  COD
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum ReturnType {
+  RETURN
+  EXCHANGE
+}
+
+enum ReturnStatus {
+  REQUESTED
+  APPROVED
+  REJECTED
+  PICKED_UP
+  COMPLETED
+}
+
+enum CouponType {
+  PERCENT
+  FLAT
+}
+
+enum CartItemKind {
+  PRODUCT
+  HAMPER
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  phone        String?
+  passwordHash String
+  role         Role     @default(CUSTOMER)
+  // Saved payment preference (we never store card data — Razorpay handles that)
+  preferredPayment String?
+  marketingOptIn   Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  addresses     Address[]
+  orders        Order[]
+  carts         Cart[]
+  wishlistItems WishlistItem[]
+  reviews       Review[]
+  returns       ReturnRequest[]
+}
+
+model Address {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  phone     String
+  line1     String
+  line2     String?
+  landmark  String?
+  city      String
+  state     String
+  pincode   String
+  isDefault Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model Category {
+  id          String     @id @default(cuid())
+  slug        String     @unique
+  name        String
+  description String?
+  image       String?
+  bannerImage String?
+  parentId    String?
+  parent      Category?  @relation("CategoryTree", fields: [parentId], references: [id])
+  children    Category[] @relation("CategoryTree")
+  sortOrder   Int        @default(0)
+  showOnHome  Boolean    @default(true)
+  sizeChart   SizeChartType @default(NONE)
+  metaTitle       String?
+  metaDescription String?
+  products    Product[]
+  createdAt   DateTime   @default(now())
+}
+
+model Product {
+  id              String        @id @default(cuid())
+  slug            String        @unique
+  name            String
+  shortDescription String?
+  description     String
+  fabric          String?
+  work            String?       // e.g. Zari weaving, Gota patti, Chikankari
+  washCare        String?
+  // Pricing (paise). price = selling price, compareAtPrice = MRP / original
+  price           Int
+  compareAtPrice  Int?
+  categoryId      String
+  category        Category      @relation(fields: [categoryId], references: [id])
+  occasions       String[]      // wedding, festive, party, everyday, office, traditional
+  collections     String[]      // festive, bridal, limited-edition ... (merchandising tags)
+  tags            String[]
+  isNew           Boolean       @default(false)
+  isBestseller    Boolean       @default(false)
+  isFeatured      Boolean       @default(false)
+  popularity      Int           @default(0)   // incremented by sales; used for "popularity" sort
+  status          ProductStatus @default(ACTIVE)
+  videoUrl        String?
+  sizeChart       SizeChartType @default(NONE)
+  gstRate         Int?          // override in %, otherwise computed by rule
+  metaTitle       String?
+  metaDescription String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  images        ProductImage[]
+  variants      Variant[]
+  reviews       Review[]
+  wishlistItems WishlistItem[]
+  cartItems     CartItem[]
+  orderItems    OrderItem[]
+
+  @@index([categoryId, status])
+  @@index([createdAt])
+}
+
+model ProductImage {
+  id        String  @id @default(cuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url       String
+  alt       String?
+  colour    String? // optional: image belongs to a specific colour
+  sortOrder Int     @default(0)
+
+  @@index([productId])
+}
+
+model Variant {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  sku       String   @unique
+  size      String   // "Free Size" for sarees / hampers
+  colour    String
+  colourHex String   @default("#7a1f35")
+  stock     Int      @default(0)
+  price     Int?     // optional override (paise)
+  cartItems CartItem[]
+
+  @@index([productId])
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  name      String
+  city      String?
+  rating    Int
+  title     String?
+  body      String
+  images    String[]
+  verified  Boolean  @default(false)
+  approved  Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@index([productId, approved])
+}
+
+model Testimonial {
+  id          String   @id @default(cuid())
+  name        String
+  city        String?
+  productName String
+  productSlug String?
+  rating      Int      @default(5)
+  text        String
+  image       String?
+  sortOrder   Int      @default(0)
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+}
+
+model Cart {
+  id         String     @id @default(cuid())
+  userId     String?
+  user       User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  visitorId  String?    @unique
+  couponCode String?
+  items      CartItem[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  @@index([userId])
+}
+
+model CartItem {
+  id        String       @id @default(cuid())
+  cartId    String
+  cart      Cart         @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  kind      CartItemKind @default(PRODUCT)
+  productId String?
+  product   Product?     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  variantId String?
+  variant   Variant?     @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  quantity  Int          @default(1)
+  // For custom hampers: { boxId, componentIds: [{id, qty}], packagingId, message, recipientName }
+  hamperConfig Json?
+  createdAt DateTime     @default(now())
+
+  @@index([cartId])
+}
+
+model WishlistItem {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  visitorId String?
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId])
+  @@unique([visitorId, productId])
+}
+
+model Order {
+  id              String        @id @default(cuid())
+  number          String        @unique // human friendly, e.g. RW-24A7K9
+  userId          String?
+  user            User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  email           String
+  phone           String
+  shippingAddress Json          // snapshot {name, phone, line1, line2, landmark, city, state, pincode}
+  billingAddress  Json?
+  subtotal        Int
+  discount        Int           @default(0)
+  shippingFee     Int           @default(0)
+  codFee          Int           @default(0)
+  giftWrapFee     Int           @default(0)
+  taxAmount       Int           @default(0) // GST included in prices (for invoice)
+  total           Int
+  couponCode      String?
+  status          OrderStatus   @default(PENDING_PAYMENT)
+  paymentMethod   PaymentMethod
+  paymentStatus   PaymentStatus @default(PENDING)
+  razorpayOrderId   String?     @unique
+  razorpayPaymentId String?
+  courier         String?
+  trackingNumber  String?
+  estimatedDelivery DateTime?
+  notes           String?
+  giftMessage     String?
+  cancelReason    String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  items   OrderItem[]
+  events  OrderEvent[]
+  returns ReturnRequest[]
+
+  @@index([userId])
+  @@index([createdAt])
+  @@index([status])
+}
+
+model OrderItem {
+  id           String   @id @default(cuid())
+  orderId      String
+  order        Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  kind         CartItemKind @default(PRODUCT)
+  productId    String?
+  product      Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  variantId    String?
+  name         String
+  image        String?
+  sku          String?
+  size         String?
+  colour       String?
+  quantity     Int
+  unitPrice    Int
+  total        Int
+  gstRate      Int      @default(5)
+  hamperConfig Json?    // resolved snapshot of custom hamper contents
+
+  returns ReturnRequest[]
+}
+
+model OrderEvent {
+  id        String      @id @default(cuid())
+  orderId   String
+  order     Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  status    OrderStatus
+  note      String?
+  createdAt DateTime    @default(now())
+
+  @@index([orderId])
+}
+
+model ReturnRequest {
+  id          String       @id @default(cuid())
+  orderId     String
+  order       Order        @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderItemId String?
+  orderItem   OrderItem?   @relation(fields: [orderItemId], references: [id], onDelete: SetNull)
+  userId      String?
+  user        User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  type        ReturnType
+  reason      String
+  details     String?
+  exchangeSize String?
+  status      ReturnStatus @default(REQUESTED)
+  adminNote   String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Coupon {
+  id          String     @id @default(cuid())
+  code        String     @unique
+  description String?
+  type        CouponType
+  value       Int        // percent (e.g. 10) or flat amount in paise
+  minSubtotal Int        @default(0)
+  maxDiscount Int?       // paise cap for percent coupons
+  startsAt    DateTime?
+  endsAt      DateTime?
+  usageLimit  Int?
+  usedCount   Int        @default(0)
+  active      Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+}
+
+model Banner {
+  id           String   @id @default(cuid())
+  eyebrow      String?
+  title        String
+  subtitle     String?
+  ctaLabel     String?
+  ctaHref      String?
+  cta2Label    String?
+  cta2Href     String?
+  desktopImage String
+  mobileImage  String?
+  placement    String   @default("hero") // hero | featured
+  sortOrder    Int      @default(0)
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+}
+
+model Announcement {
+  id        String  @id @default(cuid())
+  text      String
+  href      String?
+  sortOrder Int     @default(0)
+  active    Boolean @default(true)
+}
+
+model MenuItem {
+  id        String     @id @default(cuid())
+  label     String
+  href      String
+  image     String?    // mega menu feature image
+  parentId  String?
+  parent    MenuItem?  @relation("MenuTree", fields: [parentId], references: [id], onDelete: Cascade)
+  children  MenuItem[] @relation("MenuTree")
+  sortOrder Int        @default(0)
+  active    Boolean    @default(true)
+}
+
+model Page {
+  id              String   @id @default(cuid())
+  slug            String   @unique
+  title           String
+  body            String   // lightweight markdown: ## headings, - lists, paragraphs
+  metaDescription String?
+  updatedAt       DateTime @updatedAt
+}
+
+model NewsletterSubscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  source    String?
+  createdAt DateTime @default(now())
+}
+
+model Setting {
+  key   String @id
+  value String
+}
+
+// ---------- Gift Studio: Create Your Own Hamper ----------
+
+model HamperBox {
+  id          String  @id @default(cuid())
+  name        String
+  description String
+  image       String
+  price       Int     // paise
+  capacity    Int     // max number of component units
+  dimensions  String?
+  stock       Int     @default(0)
+  sortOrder   Int     @default(0)
+  active      Boolean @default(true)
+}
+
+model HamperComponent {
+  id          String  @id @default(cuid())
+  name        String
+  description String
+  group       String  // Apparel, Accessories, Sweets & Treats, Home & Fragrance, Beauty
+  image       String
+  price       Int
+  stock       Int     @default(0)
+  maxPerHamper Int    @default(3)
+  sortOrder   Int     @default(0)
+  active      Boolean @default(true)
+}
+
+model PackagingOption {
+  id          String  @id @default(cuid())
+  name        String
+  description String
+  image       String?
+  price       Int     @default(0)
+  sortOrder   Int     @default(0)
+  active      Boolean @default(true)
+}

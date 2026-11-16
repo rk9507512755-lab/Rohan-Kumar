@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root { --header-h: 0px; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+  body { @apply bg-ivory text-ink font-sans antialiased; font-weight: 400; letter-spacing: 0.01em; }
+  h1, h2, h3, .font-display { @apply font-display; font-weight: 500; letter-spacing: 0.005em; }
+  ::selection { @apply bg-wine text-ivory; }
+  :focus-visible { outline: 1.5px solid theme("colors.wine.DEFAULT"); outline-offset: 2px; }
+  input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+  details > summary { list-style: none; }
+  details > summary::-webkit-details-marker { display: none; }
+}
+
+@layer components {
+  .container-site { @apply mx-auto w-full max-w-site px-4 sm:px-6 lg:px-10; }
+  .eyebrow { @apply text-[11px] uppercase tracking-luxe text-gold-600; font-weight: 500; }
+  .h-display { @apply font-display text-[2.2rem] leading-[1.08] sm:text-5xl lg:text-6xl; }
+  .h-section { @apply font-display text-[1.9rem] leading-tight sm:text-4xl lg:text-[2.75rem]; }
+  .lead { @apply text-[15px] leading-relaxed text-ink-400 sm:text-base; }
+
+  .btn { @apply inline-flex items-center justify-center gap-2 px-7 py-3.5 text-[12px] uppercase tracking-[0.18em] transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-50; font-weight: 500; }
+  .btn-primary { @apply btn bg-wine text-ivory hover:bg-wine-800; }
+  .btn-outline { @apply btn border border-ink/80 text-ink hover:bg-ink hover:text-ivory; }
+  .btn-light { @apply btn bg-ivory text-wine hover:bg-white; }
+  .btn-ghost-light { @apply btn border border-ivory/70 text-ivory hover:bg-ivory hover:text-wine; }
+  .btn-gold { @apply btn bg-gold text-white hover:bg-gold-600; }
+  .btn-sm { @apply px-4 py-2.5 text-[11px]; }
+  .link-underline { @apply relative inline-block; }
+  .link-underline::after { content: ""; @apply absolute -bottom-0.5 left-0 h-px w-full origin-left scale-x-0 bg-current transition-transform duration-300; }
+  .link-underline:hover::after { @apply scale-x-100; }
+
+  .field-label { @apply mb-1.5 block text-[11px] uppercase tracking-[0.14em] text-ink-400; }
+  .field { @apply w-full border border-ink-200 bg-white px-3.5 py-3 text-[15px] text-ink placeholder:text-ink-300 transition focus:border-wine focus:outline-none focus:ring-0; }
+  .field-error { @apply mt-1 text-xs text-wine-400; }
+  .card { @apply border border-ink-200/60 bg-white; }
+  .chip { @apply inline-flex items-center gap-1.5 border border-ink-200 px-3 py-1.5 text-xs text-ink transition hover:border-ink; }
+  .chip-active { @apply border-wine bg-wine text-ivory hover:border-wine; }
+  .badge { @apply inline-block bg-ivory/95 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-wine; font-weight: 500; }
+  .divider-ornament { @apply flex items-center justify-center gap-3 text-gold; }
+  .divider-ornament::before, .divider-ornament::after { content: ""; @apply h-px w-12 bg-gold/60; }
+
+  .prose-rw { @apply max-w-none text-[15px] leading-7 text-ink/85; }
+  .prose-rw h2 { @apply mb-3 mt-10 font-display text-3xl text-ink; }
+  .prose-rw h3 { @apply mb-2 mt-6 font-sans text-sm font-medium uppercase tracking-wideish text-ink; }
+  .prose-rw p { @apply mb-4; }
+  .prose-rw ul { @apply mb-5 list-none space-y-2 pl-0; }
+  .prose-rw li { @apply relative pl-6; }
+  .prose-rw li::before { content: "✦"; @apply absolute left-0 top-0 text-[10px] leading-7 text-gold; }
+  .prose-rw a { @apply text-wine underline decoration-gold/60 underline-offset-4; }
+  .prose-rw strong { @apply font-medium text-ink; }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  .text-balance { text-wrap: balance; }
+  .img-zoom { transition: transform 1.2s cubic-bezier(.2,.7,.2,1); }
+  .group:hover .img-zoom { transform: scale(1.045); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}
+
+@media print {
+  .no-print { display: none !important; }
+  body { background: #fff; }
+}
