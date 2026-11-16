@@ -1,0 +1,13 @@
+/* Back-office helpers (scoped to /admin). Uses Tailwind utilities only. */
+.admin-card { @apply border border-ink-200/70 bg-white p-4 sm:p-6; }
+.admin-link { @apply text-sm text-wine underline-offset-4 hover:underline disabled:opacity-50; }
+.admin-danger { @apply text-sm text-wine-700 underline-offset-4 hover:underline disabled:opacity-50; }
+.admin-table { @apply w-full border-collapse text-sm; }
+.admin-table th { @apply whitespace-nowrap border-b border-ink-200 bg-ivory-200/60 px-3 py-2.5 text-left text-[11px] font-medium uppercase tracking-[0.1em] text-ink-400; }
+.admin-table td { @apply border-b border-ink-200/50 px-3 py-3 align-middle; }
+.admin-table tbody tr:hover { @apply bg-ivory-50; }
+.admin-scroll { @apply -mx-4 overflow-x-auto sm:mx-0; }
+.admin-filters .field { @apply py-2 text-sm; }
+.admin .field { @apply py-2.5 text-[14px]; }
+.admin .btn-sm { @apply py-2; }
+.admin h1 { @apply font-display text-3xl leading-tight text-ink sm:text-[2.1rem]; }
